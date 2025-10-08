@@ -12,15 +12,17 @@ import { Goals } from './1_Pages/Goals';
 function App() {
   return (
     <>
-      <HeaderWelcome />
-      <Routes>
-        <Route path="/" element={<HeaderTabs />}>
-          <Route path="/hobbies" element={<Hobbies />} />
-          <Route index element={<Calendar />} />
-          <Route path="/metrics" element={<Metrics />} />
-          <Route path="/goals" element={<Goals />} />
-        </Route>
-      </Routes>
+      <div className="app-container">
+        <HeaderWelcome />
+        <Routes>
+          <Route path="/" element={<HeaderTabs />}>
+            <Route path="/hobbies" element={<Hobbies />} />
+            <Route index element={<Calendar />} />
+            <Route path="/metrics" element={<Metrics />} />
+            <Route path="/goals" element={<Goals />} />
+          </Route>
+        </Routes>
+      </div>
     </>
   );
 }
