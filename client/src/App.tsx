@@ -2,8 +2,8 @@ import './App.css';
 import './fonts.css';
 import { Routes, Route } from 'react-router';
 
-import { HeaderWelcome } from './2_Components/Header-Welcome';
-import { HeaderTabs } from './2_Components/Header-Tabs';
+import { Header } from './2_Components/Header';
+import { Footer } from './2_Components/Footer';
 import { Hobbies } from './1_Pages/Hobbies';
 import { Calendar } from './1_Pages/Calendar';
 import { Metrics } from './1_Pages/Metrics';
@@ -13,9 +13,9 @@ function App() {
   return (
     <>
       <div className="app-container">
-        <HeaderWelcome />
+        <Header />
         <Routes>
-          <Route path="/" element={<HeaderTabs />}>
+          <Route path="/" element={<Footer />}>
             <Route path="/hobbies" element={<Hobbies />} />
             <Route index element={<Calendar />} />
             <Route path="/metrics" element={<Metrics />} />

@@ -5,45 +5,45 @@ import { FaRegCalendarAlt } from 'react-icons/fa';
 import { FaRegChartBar } from 'react-icons/fa';
 import { FaRegCheckCircle } from 'react-icons/fa';
 
-export function HeaderTabs() {
+export function Footer() {
   return (
-    <div>
-      <div className="header-tabs-container">
-        <div className="header-tabs-link-container">
+    <div className="footer">
+      <div className="footer-container">
+        <div className="footer-link-container">
           <div>
-            <FaList />
+            <FaList size={30} />
           </div>
-          <div>
+          <div className="footer-link-text">
             <Link to="/hobbies">
               <p>Hobbies</p>
             </Link>
           </div>
         </div>
-        <div className="header-tabs-link-container">
+        <div className="footer-link-container">
           <div>
-            <FaRegCalendarAlt />
+            <FaRegCalendarAlt size={30} />
           </div>
-          <div>
+          <div className="footer-link-text">
             <Link to="/">
               <p>Calendar</p>
             </Link>
           </div>
         </div>
-        <div className="header-tabs-link-container">
+        <div className="footer-link-container">
           <div>
-            <FaRegChartBar />
+            <FaRegChartBar size={30} />
           </div>
-          <div>
+          <div className="footer-link-text">
             <Link to="/metrics">
               <p>Metrics</p>
             </Link>
           </div>
         </div>
-        <div className="header-tabs-link-container">
+        <div className="footer-link-container">
           <div>
-            <FaRegCheckCircle />
+            <FaRegCheckCircle size={30} />
           </div>
-          <div>
+          <div className="footer-link-text">
             <Link to="/goals">
               <p>Goals</p>
             </Link>

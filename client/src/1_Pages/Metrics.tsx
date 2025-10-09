@@ -1,3 +1,7 @@
 export function Metrics() {
-  return <h1>This is where metrics will go!</h1>;
+  return (
+    <div className="content-page">
+      <h1>This is where metrics will go!</h1>
+    </div>
+  );
 }
