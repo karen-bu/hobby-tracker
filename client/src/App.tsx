@@ -1,35 +1,30 @@
-import { useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
 import './App.css';
+import './fonts.css';
+import { Routes, Route } from 'react-router';
 
-export default function App() {
-  const [serverData, setServerData] = useState('');
+import { Header } from './2_Components/Header';
+import { Footer } from './2_Components/Footer';
+import { Hobbies } from './1_Pages/Hobbies';
+import { Calendar } from './1_Pages/Calendar';
+import { Metrics } from './1_Pages/Metrics';
+import { Goals } from './1_Pages/Goals';
 
-  useEffect(() => {
-    async function readServerData() {
-      const resp = await fetch('/api/hello');
-      const data = await resp.json();
-
-      console.log('Data from server:', data);
-
-      setServerData(data.message);
-    }
-
-    readServerData();
-  }, []);
-
+function App() {
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="app-container">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Footer />}>
+            <Route path="/hobbies" element={<Hobbies />} />
+            <Route index element={<Calendar />} />
+            <Route path="/metrics" element={<Metrics />} />
+            <Route path="/goals" element={<Goals />} />
+          </Route>
+        </Routes>
       </div>
-      <h1>{serverData}</h1>
     </>
   );
 }
+
+export default App;

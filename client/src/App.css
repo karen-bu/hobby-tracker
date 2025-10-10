@@ -1,45 +1,88 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.app-container {
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.header-container {
+  width: 100%;
+  background-color: #196a95;
+  display: flex;
+  font-family: 'Dosis Medium', sans-serif;
+  font-size: 1rem;
+  color: white;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+.header-link {
+  display: flex;
+  width: 50%;
+  align-items: center;
 }
 
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.header-link.log-out {
+  margin-right: 50px;
+  justify-content: end;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.header-container img {
+  max-width: 100px;
+  margin: 10px;
+  margin-left: 20px;
+}
+
+.footer {
+  @media screen and (width > 1024px) {
+    display: flex;
+  }
+}
+
+.footer-container {
+  background-color: #17456c;
+  color: white;
+  width: 100px;
+
+  @media screen and (width >1024px) {
+    height: 100vh;
   }
 
-  to {
-    transform: rotate(360deg);
+  @media screen and (width <= 1024px) {
+    justify-content: space-around;
+    height: auto;
+    width: 100%;
+    display: flex;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+.footer-link-container {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  margin: 30px;
+  font-size: 18px;
+
+  @media screen and (width <= 1024px) {
+    margin-bottom: 15px;
   }
 }
 
-.card {
-  padding: 2em;
+.footer-link-container a {
+  color: white;
+  font-family: Barlow, sans-serif;
 }
 
-.read-the-docs {
-  color: #888;
+.footer-link-text {
+  margin-top: -10px;
+  margin-bottom: 20px;
+
+  @media screen and (width <= 1024px) {
+    margin-bottom: 0;
+  }
+}
+
+.content-page {
+  margin: 20px;
 }
