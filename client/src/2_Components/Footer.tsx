@@ -11,17 +11,17 @@ export function Footer() {
       <div className="footer-container">
         <div className="footer-link-container">
           <div>
-            <FaList size={30} />
+            <FaList size={25} />
           </div>
           <div className="footer-link-text">
-            <Link to="/hobbies">
+            <Link to='/hobbies'>
               <p>Hobbies</p>
             </Link>
           </div>
         </div>
         <div className="footer-link-container">
           <div>
-            <FaRegCalendarAlt size={30} />
+            <FaRegCalendarAlt size={25} />
           </div>
           <div className="footer-link-text">
             <Link to="/">
@@ -31,7 +31,7 @@ export function Footer() {
         </div>
         <div className="footer-link-container">
           <div>
-            <FaRegChartBar size={30} />
+            <FaRegChartBar size={25} />
           </div>
           <div className="footer-link-text">
             <Link to="/metrics">
@@ -41,7 +41,7 @@ export function Footer() {
         </div>
         <div className="footer-link-container">
           <div>
-            <FaRegCheckCircle size={30} />
+            <FaRegCheckCircle size={25} />
           </div>
           <div className="footer-link-text">
             <Link to="/goals">
