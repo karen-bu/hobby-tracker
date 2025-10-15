@@ -14,7 +14,7 @@ export function Hobbies() {
     'Causing Mayhem',
     'Causing Chaos',
     'Drag Racing',
-    'Gardening'
+    'Gardening',
   ];
 
   const hobbyList = hobbyArray.map((hobby, index) => (
@@ -41,7 +41,6 @@ export function Hobbies() {
         <div className="hobbies row-100">
           <HobbyForm handleSubmit={testSubmit} />
         </div>
-
         {hobbyList}
       </div>
     </div>
