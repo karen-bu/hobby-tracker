@@ -53,6 +53,7 @@
   z-index: 1;
 
   @media screen and (width >1024px) {
+    min-height: 100vh;
     height: 100%;
   }
 
@@ -214,4 +215,24 @@
   text-align: center;
   font-family: Barlow, sans-serif;
   font-size: 18px;
+}
+
+/* CALENDAR */
+
+
+/* METRICS */
+.content-page.metrics {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  overflow: scroll;
+
+  @media screen and (width <= 1024px) {
+    height: 98%;
+  }
+}
+
+.metrics.row-100 {
+  justify-content: center;
 }
