@@ -11,6 +11,7 @@
 .header {
   width: 100%;
 }
+
 .header-container {
   width: 100%;
   background-color: #196a95;
@@ -49,17 +50,19 @@
   background-color: #17456c;
   color: white;
   padding-top: 20px;
+  z-index: 1;
 
   @media screen and (width >1024px) {
-    height: 100vh;
+    min-height: 100vh;
+    height: 100%;
   }
 
   @media screen and (width <= 1024px) {
     justify-content: space-around;
-    padding-top: 0px;
+    padding-top: 0;
     height: auto;
     display: flex;
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 0;
     right: 0;
@@ -101,11 +104,11 @@
   justify-content: center;
   padding-top: 20px;
 
-    @media screen and (width <= 1024px) {
-      margin-left: 0px;
-      margin-right: 0px;
-      margin-top: 20px;
-      padding-top: 5px;
+  @media screen and (width <= 1024px) {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 20px;
+    padding-top: 5px;
   }
 }
 
@@ -117,16 +120,16 @@
 .content-page h1,
 .content-page h2,
 .content-page h3 {
-  font-family: 'Dosis', sans-serif;
+  font-family: Dosis, sans-serif;
   color: #196a95;
 
-    @media screen and (width <= 1024px) {
-      font-size: 18px;
+  @media screen and (width <= 1024px) {
+    font-size: 18px;
   }
 }
 
 .content-page p {
-  font-family: 'Barlow';
+  font-family: Barlow, sans-serif;
   font-size: 1.25rem;
   color: #196a95;
 }
@@ -137,56 +140,101 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  height: 100%;
+  overflow: scroll;
+
+  @media screen and (width <= 1024px) {
+    height: 98%;
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 .hobbies.row-100 {
-  display: flex;
   justify-content: center;
 }
 
-.hobbies.input-holder {
+.hobbies.input-wrapper,
+.hobbies.chip-wrapper {
   position: relative;
   display: flex;
-  width: 100%;
+  max-width: 100%;
+}
+
+.hobbies.chip-wrapper {
+  margin-top: 20px;
 }
 
 .hobbies.input {
   display: flex;
   justify-content: center;
-  border: 2px solid #196A95;
+  border: 2px solid #17456c;
   width: 100%;
   height: 50px;
   border-radius: 15px;
-  padding-left: 20px;
   text-align: center;
-  font-family: 'Barlow', sans-serif;
+  font-family: Barlow, sans-serif;
   font-size: 18px;
 }
 
-.hobbies.input:focus{
+.hobbies.input:focus {
   outline: transparent;
-  border: 2px solid #196A95;
+  border: 2px solid #196a95;
 }
 
-.hobbies.input::placeholder{
+.hobbies.input::placeholder {
   font-size: 18px;
-
 }
 
-.hobbies.input:focus::placeholder{
+.hobbies.input:focus::placeholder {
   color: transparent;
 }
 
-.hobbies.input-plus {
+.hobbies.input-plus,
+.hobbies.chip-x {
   position: absolute;
   background-color: transparent;
   border: transparent;
   left: 90%;
   top: 25%;
 
-@media screen and (width <= 1024px) {
-  left: 87%
+  @media screen and (width <= 1024px) {
+    left: 87%;
+  }
 }
+
+.hobbies.hobby-chip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border-radius: 15px;
+  text-align: center;
+  font-family: Barlow, sans-serif;
+  font-size: 18px;
+}
+
+/* CALENDAR */
+
+
+/* METRICS */
+.content-page.metrics {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  overflow: scroll;
+
+  @media screen and (width <= 1024px) {
+    height: 98%;
+  }
+}
+
+.metrics.row-100 {
+  justify-content: center;
 }
 
 /* CALENDAR */
