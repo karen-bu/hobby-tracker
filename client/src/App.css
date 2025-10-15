@@ -109,7 +109,6 @@
   }
 }
 
-
 .content-page.text{
   width: 100%;
   align-items: center;
@@ -188,4 +187,30 @@
 @media screen and (width <= 1024px) {
   left: 87%
 }
+}
+
+/* CALENDAR */
+
+.content-page.calendar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+
+    @media screen and (width <= 1024px) {
+    display: inline;
+  }
+}
+
+.calendar.row-50 {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+
+  @media screen and (width <= 1024px) {
+    width: 100%;
+  }
+}
+
+.calendar.text{
+  text-align: center;
 }
