@@ -122,16 +122,42 @@
 .content-page h3 {
   font-family: Dosis, sans-serif;
   color: #196a95;
+}
+
+.content-page h1{
+  @media screen and (width <= 1024px) {
+    font-size: 3rem;
+  }
+}
+
+.content-page h2 {
+  @media screen and (width <= 1024px) {
+    font-size: 2rem;
+  }
+}
+
+.content-page h3 {
+  font-weight: 500;
 
   @media screen and (width <= 1024px) {
-    font-size: 18px;
+    font-size: 1rem;
+    font-weight: 500;
   }
 }
 
 .content-page p {
   font-family: Barlow, sans-serif;
   font-size: 1.25rem;
-  color: #196a95;
+  color: #000000;
+}
+
+.content-page .p-heading {
+  font-weight: 500;
+}
+
+.content-page .p-small {
+  font-size: 14px;
+
 }
 
 /* HOBBIES */
@@ -153,13 +179,19 @@
 }
 
 .hobbies.row-100 {
-  justify-content: center;
+  width: 100%;
 }
 
-.hobbies.input-wrapper,
+.hobbies.input-wrapper {
+  position: relative;
+  justify-content: center;
+  width: 100%;
+}
+
 .hobbies.chip-wrapper {
   position: relative;
   display: flex;
+  width: 100%;
   max-width: 100%;
 }
 
@@ -229,20 +261,31 @@
   }
 }
 
-.calendar.row-50 {
-  width: 50%;
+.calendar .row-100{
+  width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+}
 
-  @media screen and (width <= 1024px) {
-    width: 100%;
-  }
+.calendar .row-50{
+  width: 50%;
+  display: flex;
+}
+
+.calendar.row-33 {
+  min-width: 33%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .calendar.calendar-wrapper,
 .calendar.text-wrapper,
-.calendar.date-wrapper {
-  padding-left: 50px;
+.calendar.date-wrapper,
+.calendar.entries-wrapper,
+.calendar.input-wrapper {
+  width: 100%;
   text-align: center;
 
   @media screen and (width <= 1024px) {
@@ -250,19 +293,65 @@
   }
 }
 
-/* METRICS */
-.content-page.metrics {
-  width: 100%;
+.calendar.input-wrapper {
+  position: relative
+}
+
+.calendar-arrow {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.calendar-arrow:hover{
+  transform: scale(1.25);
+  transition: ease-in-out 0.25s
+}
+
+.calendar.input {
   display: flex;
   justify-content: center;
-  height: 100%;
-  overflow: scroll;
+  border: 2px solid #17456c;
+  width: 100%;
+  height: 50px;
+  border-radius: 15px;
+  text-align: center;
+  font-family: Barlow, sans-serif;
+  font-size: 18px;
+}
+
+.calendar.input-plus {
+  position: absolute;
+  background-color: transparent;
+  border: transparent;
+  left: 90%;
+  top: 25%;
 
   @media screen and (width <= 1024px) {
-    height: 98%;
+    left: 87%;
   }
 }
 
-.metrics.row-100 {
+.calendar.input:focus {
+  outline: transparent;
+  border: 2px solid #196a95;
+}
+
+.calendar.input::placeholder {
+  font-size: 18px;
+}
+
+.calendar.input:focus::placeholder {
+  color:
+}
+
+.entries.input {
+  display: flex;
   justify-content: center;
+  border: 2px solid #17456c;
+  width: 100%;
+  height: 50px;
+  border-radius: 15px;
+  text-align: center;
+  font-family: Barlow, sans-serif;
+  font-size: 18px;
 }

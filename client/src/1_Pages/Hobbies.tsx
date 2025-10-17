@@ -35,11 +35,11 @@ export function Hobbies() {
   return (
     <div className="content-page hobbies">
       <div>
-        <div className="hobbies row-100">
-          <h2>You have no saved hobbies to track. Add some now!</h2>
-        </div>
-        <div className="hobbies row-100">
+        <div className="hobbies input-wrapper">
           <HobbyForm handleSubmit={testSubmit} />
+        </div>
+        <div className="hobbies text-wrapper">
+          <p className='p-heading'>You have no saved hobbies to track. Add some now!</p>
         </div>
         {hobbyList}
       </div>

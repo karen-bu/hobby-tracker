@@ -2,19 +2,19 @@ import { FormEvent } from 'react';
 import { useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
 
-type HobbyFormProps = {
+type FormProps = {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
 };
 
-export function HobbyForm({ handleSubmit }: HobbyFormProps) {
+export function HobbyForm({ handleSubmit }: FormProps) {
   const [content, setContent] = useState('');
 
   return (
-    <form onSubmit={handleSubmit} className="hobbies input-wrapper">
+    <form onSubmit={handleSubmit}>
       <input
-        className="hobbies input"
-        name="add-new-hobby"
-        type="text"
+        className='hobbies input'
+        name='add-new-hobby'
+        type='text'
         placeholder="Add New Hobby"
         value={content}
         onChange={(event) => setContent(event.target.value)}
@@ -24,6 +24,7 @@ export function HobbyForm({ handleSubmit }: HobbyFormProps) {
           <FiPlusCircle size={25} style={{ color: '#196A95' }} />
         </button>
       )}
+
     </form>
   );
 }
