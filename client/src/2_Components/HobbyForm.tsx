@@ -21,7 +21,7 @@ export function HobbyForm({ handleSubmit }: FormProps) {
       />
       {content !== '' && (
         <button className="hobbies input-plus">
-          <FiPlusCircle size={25} style={{ color: '#196A95' }} />
+          <FiPlusCircle size={25} style={{ color: '#17456C' }} />
         </button>
       )}
 

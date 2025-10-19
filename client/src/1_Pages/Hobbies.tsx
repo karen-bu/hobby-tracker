@@ -34,7 +34,7 @@ export function Hobbies() {
 
   return (
     <div className="content-page hobbies">
-      <div>
+      <div className='hobbies list-wrapper'>
         <div className="hobbies input-wrapper">
           <HobbyForm handleSubmit={testSubmit} />
         </div>

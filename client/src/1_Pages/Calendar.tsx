@@ -36,7 +36,7 @@ export function Calendar() {
           <DateCalendar value={date} onChange={(value) => setDate(value)} />
         </LocalizationProvider>
         <div className="calendar date-wrapper">
-          <div className='calendar row-100'>
+          <div className='calendar text row-100'>
             <p className='p-small'>Viewing entries for</p>
           </div>
           <div className='calendar row-33'>
@@ -45,12 +45,7 @@ export function Calendar() {
             <FaAngleRight size={30} className='calendar-arrow' onClick={getTomorrow} /></div>
         </div>
       </div>
-      <div className='calendar input-wrapper'>
-        <EntryForm />
-        {/* <Form formPlaceholder="Add New Entry" formClassName='calendar input' formName='add-new-entry' formType='select'
-            buttonClassName="calendar input-plus"
-            handleSubmit={() => console.log('submitted!')} /> */}
-      </div>
+      <EntryForm />
     </div>
   );
 }
