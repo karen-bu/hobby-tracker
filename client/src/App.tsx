@@ -2,6 +2,8 @@ import './App.css';
 import './fonts.css';
 import { Routes, Route } from 'react-router';
 
+import { SignUp } from './1_Pages/Sign Up';
+
 import { Header } from './2_Components/Header';
 import { Footer } from './2_Components/Footer';
 import { Hobbies } from './1_Pages/Hobbies';
@@ -13,8 +15,10 @@ function App() {
   return (
     <>
       <div className="app-container">
+
         <Header />
         <Routes>
+          <Route path='/sign-up' element={<SignUp />} />
           <Route path="/" element={<Footer />}>
             <Route path="/hobbies" element={<Hobbies />} />
             <Route index element={<Calendar />} />

@@ -121,7 +121,8 @@
 
 .content-page h1,
 .content-page h2,
-.content-page h3 {
+.content-page h3,
+.content-page h4 {
   font-family: Dosis, sans-serif;
   color: #196a95;
 }
@@ -162,6 +163,135 @@
 
 }
 
+/* AUTHENTICATION */
+
+.authentication-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.authentication.row-100 {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+
+.authentication.row-100-right {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+}
+
+.authentication.row-password {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.authentication.row-50 {
+  width: 50%;
+}
+
+.authentication-page img {
+  width: 400px;
+  height: 400px;
+
+  @media screen and (width <= 1024px) {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+.authentication-page h1,
+.authentication-page h4 {
+  font-family: Dosis, sans-serif;
+
+}
+
+.authentication-page h1 {
+  color: #49AD8F;
+  font-size: 3.5rem;
+  font-weight: 500;
+  text-align: center;
+
+}
+
+.authentication-page h4 {
+  color: #49AD8F;
+  font-size: 1rem;
+}
+
+.authentication-page p {
+  font-family: "Barlow", sans-serif;
+  font-size: 2rem;
+  font-weight: 300;
+  text-align: center;
+
+    @media screen and (width <= 1024px) {
+    font-size: 1.5rem;
+  }
+}
+
+.authentication-page .p-small {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.authentication-page .p-button {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.authentication.input {
+  width: 100%;
+  height: 50px;
+  border-radius: 15px;
+  padding-left: 10px;
+  font-family: "Barlow", sans-serif;
+}
+
+.authentication.input::placeholder {
+  font-family: "Barlow", sans-serif;
+}
+
+.authentication.input.password {
+  margin-top: 20px;
+  position: relative;
+}
+
+.authentication.button {
+  background: transparent;
+  border: transparent;
+  position: absolute;
+  top: 38px;
+  right: 10px;
+}
+
+.authentication.sign-up {
+  border: transparent;
+  background-color: #6BC188;
+  margin-top: 20px;
+  width: 100px;
+  height: 50px;
+  border-radius: 15px;
+}
+
+.authentication.sign-up:hover {
+  background-color: #8FD481;
+  transition: 0.25s ease-in-out;
+}
+
+.authentication.sign-up:active {
+background-color: #6BC188;
+transition: 0.025s ease-in
+}
+
+.authentication.sign-up:disabled{
+  background-color: #DFDFDF
+}
+
 /* HOBBIES */
 
 .content-page.hobbies {
@@ -185,6 +315,7 @@
 }
 
 .hobbies.list-wrapper {
+  height: 100vh;
   @media screen and (width <=1024px) {
     width: 80%;
   }
@@ -201,9 +332,6 @@
   display: flex;
   width: 100%;
   max-width: 100%;
-}
-
-.hobbies.chip-wrapper {
   margin-top: 20px;
 }
 
