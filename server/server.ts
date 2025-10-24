@@ -1,24 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- Remove when used */
 import 'dotenv/config';
-import express from 'express';
 import pg from 'pg';
+import express from 'express';
 import { ClientError, errorMiddleware } from './lib/index.js';
 import argon2, { hash } from 'argon2';
 import jwt from 'jsonwebtoken';
 import { main } from './seed.js';
 
-
 type User = {
   userId: number;
   username: string;
   hashedPassword: string;
-}
+};
+
+type Authentication = {
+  username: string;
+  password: string;
+};
 
 type Hobby = {
   hobbyId: number;
   userId: number;
   hobbyName: string;
-}
+};
 
 type Entry = {
   entryId: number;
@@ -29,9 +33,9 @@ type Entry = {
   notes?: number;
   entryDate: Date;
   createdAt: Date;
-}
+};
 
-type Goal = {}
+// type Goal = {}
 
 export const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -56,50 +60,74 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello, World!' });
 });
 
-// User Management
+// USER MANAGEMENT
 
-
-const hashKey = process.env.TOKEN_SECRET
-if (!hashKey) throw new Error('TOKEN_SECRET not found!')
+const hashKey = process.env.TOKEN_SECRET;
+if (!hashKey) throw new Error('TOKEN_SECRET not found!');
 
 // Path for signing up
 
 app.post('/api/auth/sign-up', async (req, res, next) => {
   try {
-    const {username, password} = req.body;
-      if (!username || !password) {
-        throw new ClientError(400, 'Username and password are required.')
-      }
-    const hashedPassword = await argon2.hash(password)
-      if (!hashedPassword) {
-        throw new ClientError(404, 'Password cannot be accepted.')
-      }
+    const { username, password } = req.body;
+    if (!username || !password) {
+      throw new ClientError(400, 'Username and password are required.');
+    }
+    const hashedPassword = await argon2.hash(password);
+    if (!hashedPassword) {
+      throw new ClientError(404, 'Password cannot be accepted.');
+    }
     const sqlSignUp = `
     insert into "users" ("username", "hashedPassword")
     values ($1, $2)
     returning *
     `;
 
-    const params = [username, hashedPassword]
+    const params = [username, hashedPassword];
     const result = await db.query(sqlSignUp, params);
-    const newUser = result.rows[0]
-      if (!newUser) {
-        throw new ClientError(404, 'Cannot add new user.')
-      }
-    res.status(201).json(newUser)
+    const newUser = result.rows[0];
+    if (!newUser) {
+      throw new ClientError(404, 'Cannot add new user.');
+    }
+    res.status(201).json(newUser);
+  } catch (err) {
+    next(err);
   }
-  catch (err) {
-    next(err)
-  }
-})
-
+});
 
 // Path for signing in
 
+app.post('/api/auth/sign-in', async (req, res, next) => {
+  try {
+    const { username, password } = req.body as Partial<Authentication>;
+    if (!username || !password) throw new ClientError(401, 'Invalid Login');
 
+    const sqlSignIn = `
+    select *
+    from "users"
+    where "username" = $1
+    `;
 
+    const params = [username];
+    const result = await db.query(sqlSignIn, params);
+    if (!result) throw new ClientError(401, 'Invalid Login');
 
+    const user = result.rows[0];
+    const hashKey = process.env.TOKEN_SECRET;
+    if (!hashKey) throw new Error(`TOKEN_SECRET not found in .env`);
 
+    if (!(await argon2.verify(user.hashedPassword, password))) {
+      throw new ClientError(401, 'Invalid Login');
+    }
+
+    const { userId } = user;
+    const payload = { userId, username };
+    const token = jwt.sign(payload, hashKey);
+    res.status(201).json({ token, user: payload });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Path for getting hobbies
 
@@ -109,46 +137,43 @@ app.get('/api/auth/hobbies', async (req, res, next) => {
     select *
       from "hobbies"
     `;
-
-    const result = await db.query<Hobby>(sqlGetHobbies)
-    if (!result ) {
-      throw new ClientError(404, 'Cannot fetch list of hobbies')
+    const result = await db.query<Hobby>(sqlGetHobbies);
+    if (!result) {
+      throw new ClientError(404, 'Cannot fetch list of hobbies');
     }
-
     res.status(200).json(result.rows);
+  } catch (err) {
+    next(err);
   }
-  catch (err) {
-    next (err)
-  }
-})
+});
 
+// // Path for adding hobbies
 
+// app.post('/api/auth/hobbies', async (req, res, next) => {
+//   try {
+//     const { hobby, userId, hobbyName } = req.body
 
+//     const sqlNewHobby = `
+//     insert into "hobbies" ("hobbyId", "userId", "hobbyName")
+//     values ($1, $2, $3)
+//     returning *;
+//     `;
 
+//     const params = [hobby, userId, hobbyName]
+//     const result = await db.query(sqlNewHobby, params)
 
-app.post('/api/auth/hobbies', async (req, res, next) => {
-  try {
-    const { hobby } = req.body
+//     const hobbies = result.rows
+//     if (!hobbies) {
+//       throw new ClientError(404, 'Unable to add new hobby.')
+//     }
 
-    const sqlNewHobby = `
-    inser into "hobbies"
-    `
-
-
-
-
-
-  }
-  catch (err){
-    next (err)
-  }
-}
-
-
-)
-
-
-
+//     res.status(201).json(hobbies)
+//   }
+//   catch (err){
+//     next (err)
+//   }
+// }
+// )
 
 /*
  * Handles paths that aren't handled by any other route handler.
@@ -161,5 +186,5 @@ app.use(errorMiddleware);
 
 app.listen(process.env.PORT, async () => {
   console.log('Listening on port', process.env.PORT);
-  main()
+  main();
 });

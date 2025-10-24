@@ -27,6 +27,12 @@
   margin-left: 20px;
 }
 
+.header-logged-out {
+  width: 100%;
+  height: 120px;
+  background-color: #6bc188;
+}
+
 .header-link {
   display: flex;
   width: 50%;
@@ -36,6 +42,15 @@
 .header-link.log-out {
   margin-right: 50px;
   justify-content: end;
+}
+
+.log-out {
+  background: transparent;
+  border: none;
+  color: white;
+  text-decoration: underline;
+  font-family: Barlow, sans-serif;
+  font-size: 15px;
 }
 
 /* FOOTER + SIDEBAR */
@@ -127,7 +142,7 @@
   color: #196a95;
 }
 
-.content-page h1{
+.content-page h1 {
   @media screen and (width <= 1024px) {
     font-size: 3rem;
   }
@@ -151,7 +166,7 @@
 .content-page p {
   font-family: Barlow, sans-serif;
   font-size: 1.25rem;
-  color: #000000;
+  color: #000;
 }
 
 .content-page .p-heading {
@@ -160,7 +175,6 @@
 
 .content-page .p-small {
   font-size: 14px;
-
 }
 
 /* AUTHENTICATION */
@@ -169,14 +183,14 @@
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .authentication.row-100 {
   width: 100%;
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
-
 
 .authentication.row-100-right {
   width: 100%;
@@ -195,8 +209,8 @@
 }
 
 .authentication-page img {
-  width: 400px;
-  height: 400px;
+  width: 300px;
+  height: 300px;
 
   @media screen and (width <= 1024px) {
     width: 300px;
@@ -207,29 +221,25 @@
 .authentication-page h1,
 .authentication-page h4 {
   font-family: Dosis, sans-serif;
-
 }
 
 .authentication-page h1 {
-  color: #49AD8F;
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 500;
   text-align: center;
-
 }
 
 .authentication-page h4 {
-  color: #49AD8F;
   font-size: 1rem;
 }
 
 .authentication-page p {
-  font-family: "Barlow", sans-serif;
-  font-size: 2rem;
+  font-family: Barlow, sans-serif;
+  font-size: 1.25rem;
   font-weight: 300;
   text-align: center;
 
-    @media screen and (width <= 1024px) {
+  @media screen and (width <= 1024px) {
     font-size: 1.5rem;
   }
 }
@@ -249,11 +259,11 @@
   height: 50px;
   border-radius: 15px;
   padding-left: 10px;
-  font-family: "Barlow", sans-serif;
+  font-family: Barlow, sans-serif;
 }
 
 .authentication.input::placeholder {
-  font-family: "Barlow", sans-serif;
+  font-family: Barlow, sans-serif;
 }
 
 .authentication.input.password {
@@ -271,7 +281,6 @@
 
 .authentication.sign-up {
   border: transparent;
-  background-color: #6BC188;
   margin-top: 20px;
   width: 100px;
   height: 50px;
@@ -279,17 +288,17 @@
 }
 
 .authentication.sign-up:hover {
-  background-color: #8FD481;
+  opacity: 75%;
   transition: 0.25s ease-in-out;
 }
 
 .authentication.sign-up:active {
-background-color: #6BC188;
-transition: 0.025s ease-in
+  opacity: 100%;
+  transition: 0.025s ease-in;
 }
 
-.authentication.sign-up:disabled{
-  background-color: #DFDFDF
+.authentication.sign-up:disabled {
+  background-color: #dfdfdf;
 }
 
 /* HOBBIES */
@@ -316,6 +325,8 @@ transition: 0.025s ease-in
 
 .hobbies.list-wrapper {
   height: 100vh;
+  width: 50%;
+
   @media screen and (width <=1024px) {
     width: 80%;
   }
@@ -330,7 +341,7 @@ transition: 0.025s ease-in
 .hobbies.chip-wrapper {
   position: relative;
   display: flex;
-  width: 100%;
+  min-width: 100%;
   max-width: 100%;
   margin-top: 20px;
 }
@@ -393,14 +404,14 @@ transition: 0.025s ease-in
   overflow: scroll;
 }
 
-.calendar.row-100{
+.calendar.row-100 {
   width: 100%;
   display: flex;
   justify-content: left;
   align-items: center;
 }
 
-.calendar.text.row-100{
+.calendar.text.row-100 {
   justify-content: center;
 }
 
@@ -409,12 +420,12 @@ transition: 0.025s ease-in
   justify-content: left;
 }
 
-.calendar.row-50{
+.calendar.row-50 {
   width: 50%;
   display: flex;
 }
 
-.calendar.row-50.star-rating{
+.calendar.row-50.star-rating {
   justify-content: right;
 }
 
@@ -451,9 +462,9 @@ transition: 0.025s ease-in
   margin-right: 20px;
 }
 
-.calendar-arrow:hover{
+.calendar-arrow:hover {
   transform: scale(1.25);
-  transition: ease-in-out 0.25s
+  transition: ease-in-out 0.25s;
 }
 
 .calendar.input {
@@ -483,7 +494,7 @@ transition: 0.025s ease-in
 }
 
 .calendar.input:focus::placeholder {
-  color:
+  color: ;
 }
 
 .calendar.form-wrapper {
@@ -495,7 +506,7 @@ transition: 0.025s ease-in
   width: 70%;
   align-items: baseline;
 
-    @media screen and (width <= 1024px) {
+  @media screen and (width <= 1024px) {
     width: 100%;
   }
 }
@@ -514,7 +525,7 @@ transition: 0.025s ease-in
   font-size: 14px;
 }
 
-.calendar.textarea{
+.calendar.textarea {
   resize: none;
   width: 100%;
   height: 200px;

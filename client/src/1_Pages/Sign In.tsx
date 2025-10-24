@@ -1,16 +1,29 @@
+import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { FormEvent } from 'react';
 import { User } from '../lib';
-
-import hobbyHorseLogo from '../assets/HobbyHorse Logo Aqua.svg';
+import { useUser } from '../2_Components/useUser';
 import { AuthForm } from '../2_Components/AuthForm';
 
-export function SignUpPage() {
+import hobbyHorseLogo from '../assets/HobbyHorse Logo Green.svg';
+
+type AuthData = {
+  user: User;
+  token: string;
+};
+
+export function SignInPage() {
+  const { handleSignIn } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useUser();
 
-  async function handleSignUpForm(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  async function handleSignInForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       setIsLoading(true);
@@ -22,16 +35,16 @@ export function SignUpPage() {
         body: JSON.stringify(userData),
       };
 
-      const res = await fetch('/api/auth/sign-up', req);
+      const res = await fetch('/api/auth/sign-in', req);
       if (!res.ok) {
         throw new Error(`fetch Error ${res.status}`);
       }
 
-      const user = (await res.json()) as User;
-      alert(`Successfully registered ${user.username}!`);
-      navigate('/sign-in');
+      const { user, token } = (await res.json()) as AuthData;
+      handleSignIn(user, token);
+      navigate('/');
     } catch (err) {
-      alert(`Error registring user: ${err}`);
+      alert(`Error signing in: ${err}`);
     } finally {
       setIsLoading(false);
     }
@@ -45,21 +58,21 @@ export function SignUpPage() {
             <img src={hobbyHorseLogo} alt="HobbyHorse Logo" />
           </div>
           <div>
-            <h1 style={{ color: '#2E969A' }}>HOBBYHORSE</h1>
+            <h1 style={{ color: '#6BC188' }}>HOBBYHORSE</h1>
           </div>
           <p>"Just Horsing Around"</p>
         </div>
         <div className="authentication row-100-right">
-          <Link to="/sign-in" style={{ color: '#2E969A' }}>
-            <p className="p-small">Existing User? Sign In Here.</p>
+          <Link to="/sign-up" style={{ color: '8FD481' }}>
+            <p className="p-small">New User? Sign Up Here.</p>
           </Link>
         </div>
         <AuthForm
-          handleSubmit={handleSignUpForm}
-          focusColor={'#6BC188'}
-          blurColor={'#2E969A'}
-          buttonColor={'#6BC188'}
-          buttonLabel={'Sign Up'}
+          handleSubmit={handleSignInForm}
+          focusColor={'#8FD481'}
+          blurColor={'#D4EA87'}
+          buttonColor={'#ACE081'}
+          buttonLabel={'Sign In'}
           isLoading={isLoading}
         />
       </div>
