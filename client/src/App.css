@@ -27,6 +27,12 @@
   margin-left: 20px;
 }
 
+.header-logged-out {
+  width: 100%;
+  height: 120px;
+  background-color: #6bc188;
+}
+
 .header-link {
   display: flex;
   width: 50%;
@@ -36,6 +42,15 @@
 .header-link.log-out {
   margin-right: 50px;
   justify-content: end;
+}
+
+.log-out {
+  background: transparent;
+  border: none;
+  color: white;
+  text-decoration: underline;
+  font-family: Barlow, sans-serif;
+  font-size: 15px;
 }
 
 /* FOOTER + SIDEBAR */
@@ -58,6 +73,7 @@
   }
 
   @media screen and (width <= 1024px) {
+    width: 100vw;
     justify-content: space-around;
     padding-top: 0;
     height: auto;
@@ -109,29 +125,180 @@
     margin-right: 0;
     margin-top: 20px;
     padding-top: 5px;
+    display: inline;
   }
 }
 
-.content-page.text{
+.content-page.text {
   width: 100%;
   align-items: center;
 }
 
 .content-page h1,
 .content-page h2,
-.content-page h3 {
+.content-page h3,
+.content-page h4 {
   font-family: Dosis, sans-serif;
   color: #196a95;
+}
+
+.content-page h1 {
+  @media screen and (width <= 1024px) {
+    font-size: 3rem;
+  }
+}
+
+.content-page h2 {
+  @media screen and (width <= 1024px) {
+    font-size: 2rem;
+  }
+}
+
+.content-page h3 {
+  font-weight: 500;
 
   @media screen and (width <= 1024px) {
-    font-size: 18px;
+    font-size: 1rem;
+    font-weight: 500;
   }
 }
 
 .content-page p {
   font-family: Barlow, sans-serif;
   font-size: 1.25rem;
-  color: #196a95;
+  color: #000;
+}
+
+.content-page .p-heading {
+  font-weight: 500;
+}
+
+.content-page .p-small {
+  font-size: 14px;
+}
+
+/* AUTHENTICATION */
+
+.authentication-page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.authentication.row-100 {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.authentication.row-100-right {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+}
+
+.authentication.row-password {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.authentication.row-50 {
+  width: 50%;
+}
+
+.authentication-page img {
+  width: 300px;
+  height: 300px;
+
+  @media screen and (width <= 1024px) {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+.authentication-page h1,
+.authentication-page h4 {
+  font-family: Dosis, sans-serif;
+}
+
+.authentication-page h1 {
+  font-size: 3rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.authentication-page h4 {
+  font-size: 1rem;
+}
+
+.authentication-page p {
+  font-family: Barlow, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  text-align: center;
+
+  @media screen and (width <= 1024px) {
+    font-size: 1.5rem;
+  }
+}
+
+.authentication-page .p-small {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.authentication-page .p-button {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.authentication.input {
+  width: 100%;
+  height: 50px;
+  border-radius: 15px;
+  padding-left: 10px;
+  font-family: Barlow, sans-serif;
+}
+
+.authentication.input::placeholder {
+  font-family: Barlow, sans-serif;
+}
+
+.authentication.input.password {
+  margin-top: 20px;
+  position: relative;
+}
+
+.authentication.button {
+  background: transparent;
+  border: transparent;
+  position: absolute;
+  top: 38px;
+  right: 10px;
+}
+
+.authentication.sign-up {
+  border: transparent;
+  margin-top: 20px;
+  width: 100px;
+  height: 50px;
+  border-radius: 15px;
+}
+
+.authentication.sign-up:hover {
+  opacity: 75%;
+  transition: 0.25s ease-in-out;
+}
+
+.authentication.sign-up:active {
+  opacity: 100%;
+  transition: 0.025s ease-in;
+}
+
+.authentication.sign-up:disabled {
+  background-color: #dfdfdf;
 }
 
 /* HOBBIES */
@@ -153,17 +320,29 @@
 }
 
 .hobbies.row-100 {
-  justify-content: center;
+  width: 100%;
 }
 
-.hobbies.input-wrapper,
+.hobbies.list-wrapper {
+  height: 100vh;
+  width: 50%;
+
+  @media screen and (width <=1024px) {
+    width: 80%;
+  }
+}
+
+.hobbies.input-wrapper {
+  position: relative;
+  justify-content: center;
+  width: 100%;
+}
+
 .hobbies.chip-wrapper {
   position: relative;
   display: flex;
+  min-width: 100%;
   max-width: 100%;
-}
-
-.hobbies.chip-wrapper {
   margin-top: 20px;
 }
 
@@ -219,46 +398,139 @@
 
 /* CALENDAR */
 
-
-/* METRICS */
-.content-page.metrics {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  height: 100%;
-  overflow: scroll;
-
-  @media screen and (width <= 1024px) {
-    height: 98%;
-  }
-}
-
-.metrics.row-100 {
-  justify-content: center;
-}
-
-/* CALENDAR */
-
 .content-page.calendar {
   width: 100%;
-  display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  overflow: scroll;
+}
 
-    @media screen and (width <= 1024px) {
-    display: inline;
-  }
+.calendar.row-100 {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.calendar.text.row-100 {
+  justify-content: center;
+}
+
+.calendar.entries.row-100 {
+  display: inline;
+  justify-content: left;
 }
 
 .calendar.row-50 {
   width: 50%;
   display: flex;
+}
+
+.calendar.row-50.star-rating {
+  justify-content: right;
+}
+
+.calendar.row-33 {
+  min-width: 33%;
+  display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.calendar.calendar-wrapper,
+.calendar.text-wrapper,
+.calendar.date-wrapper,
+.calendar.entries-wrapper,
+.calendar.input-wrapper {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+
+  @media screen and (width <= 1024px) {
+    padding-left: 0;
+  }
+}
+
+.calendar.input-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+}
+
+.calendar-arrow {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.calendar-arrow:hover {
+  transform: scale(1.25);
+  transition: ease-in-out 0.25s;
+}
+
+.calendar.input {
+  display: flex;
+  justify-content: center;
+  border: transparent;
+  width: 100%;
+  height: 50px;
+  border-radius: 15px;
+  text-align: center;
+  font-family: Barlow, sans-serif;
+  font-size: 18px;
+}
+
+.calendar.entry-plus {
+  margin-top: 20px;
+  background-color: transparent;
+  border: transparent;
+}
+
+.calendar.input:focus {
+  outline: transparent;
+}
+
+.calendar.input::placeholder {
+  font-size: 18px;
+}
+
+.calendar.input:focus::placeholder {
+  color: ;
+}
+
+.calendar.form-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.calendar.form-wrapper.row-100 {
+  width: 70%;
+  align-items: baseline;
 
   @media screen and (width <= 1024px) {
     width: 100%;
   }
 }
 
-.calendar.text{
-  text-align: center;
+.calendar.form {
+  border: 2px solid #17456c;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  width: 80%;
+  padding: 20px;
+}
+
+.calendar.form p {
+  font-size: 14px;
+}
+
+.calendar.textarea {
+  resize: none;
+  width: 100%;
+  height: 200px;
+}
+
+.calendar.form input {
+  width: 100%;
 }
