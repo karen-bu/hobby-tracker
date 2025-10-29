@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { ClientError } from './client-error.js';
+import { ClientError } from './client-error';
 
 const secret = process.env.TOKEN_SECRET ?? '';
 if (!secret) throw new Error('TOKEN_SECRET not found in env');

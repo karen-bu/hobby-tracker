@@ -70,7 +70,10 @@ export function AuthForm({
             outline: `${passwordFocus}`,
           }}></input>
         {content && (
-          <button className="authentication button" onClick={showHidePassword}>
+          <button
+            className="authentication button"
+            type="button"
+            onClick={showHidePassword}>
             {inputType === 'password' ? (
               <FiEye size={20} style={{ color: passwordFocus }} />
             ) : (

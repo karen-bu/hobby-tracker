@@ -384,6 +384,12 @@
   }
 }
 
+.hobbies.input-plus:hover,
+.hobbies.chip-x:hover {
+  transition: 0.25s ease-in-out;
+  transform: scale(1.1);
+}
+
 .hobbies.hobby-chip {
   display: flex;
   justify-content: center;
@@ -483,6 +489,11 @@
   margin-top: 20px;
   background-color: transparent;
   border: transparent;
+}
+
+.calendar.entry-plus:hover {
+  transition: 0.25s ease-in-out;
+  transform: scale(1.1);
 }
 
 .calendar.input:focus {

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- Remove when used */
 import 'dotenv/config';
-import pg from 'pg';
+import pg, { Client } from 'pg';
 import express from 'express';
-import { ClientError, errorMiddleware } from './lib/index.js';
+import { ClientError, errorMiddleware, authMiddleware } from './lib/index.js';
 import argon2, { hash } from 'argon2';
 import jwt from 'jsonwebtoken';
 import { main } from './seed.js';
@@ -129,9 +129,11 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
   }
 });
 
+// HOBBIES PAGE
+
 // Path for getting hobbies
 
-app.get('/api/auth/hobbies', async (req, res, next) => {
+app.get('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
   try {
     const sqlGetHobbies = `
     select *
@@ -147,33 +149,61 @@ app.get('/api/auth/hobbies', async (req, res, next) => {
   }
 });
 
-// // Path for adding hobbies
+// Path for adding hobbies
 
-// app.post('/api/auth/hobbies', async (req, res, next) => {
-//   try {
-//     const { hobby, userId, hobbyName } = req.body
+app.post('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
+  try {
+    const { hobbyName } = req.body;
 
-//     const sqlNewHobby = `
-//     insert into "hobbies" ("hobbyId", "userId", "hobbyName")
-//     values ($1, $2, $3)
-//     returning *;
-//     `;
+    const sqlNewHobby = `
+    insert into "hobbies" ("userId", "hobbyName")
+    values ($1, $2)
+    returning *;
+    `;
 
-//     const params = [hobby, userId, hobbyName]
-//     const result = await db.query(sqlNewHobby, params)
+    const params = [req.user?.userId, hobbyName];
+    const result = await db.query(sqlNewHobby, params);
 
-//     const hobbies = result.rows
-//     if (!hobbies) {
-//       throw new ClientError(404, 'Unable to add new hobby.')
-//     }
+    const hobbies = result.rows[0];
+    if (!hobbies) {
+      throw new ClientError(404, 'Unable to add new hobby.');
+    }
 
-//     res.status(201).json(hobbies)
-//   }
-//   catch (err){
-//     next (err)
-//   }
-// }
-// )
+    res.status(201).json(hobbies);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Path for deleting hobbies
+
+app.delete(
+  '/api/auth/hobbies/:hobbyId',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { hobbyId } = req.params;
+
+      const sqlDeleteHobby = `
+  delete from "hobbies"
+  where "hobbyId" = $1
+  returning *;
+  `;
+
+      const params = [hobbyId];
+      const result = await db.query(sqlDeleteHobby, params);
+      const deletedEntry = result.rows[0];
+      if (!deletedEntry) {
+        throw new ClientError(404, `could not find hobby ${hobbyId}`);
+      }
+      res.status(204).json(deletedEntry);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// OTHER PATHS
 
 /*
  * Handles paths that aren't handled by any other route handler.
