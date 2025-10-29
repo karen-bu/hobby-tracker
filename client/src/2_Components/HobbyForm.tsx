@@ -12,9 +12,9 @@ export function HobbyForm({ handleSubmit }: FormProps) {
   return (
     <form onSubmit={handleSubmit}>
       <input
-        className='hobbies input'
-        name='add-new-hobby'
-        type='text'
+        className="hobbies input"
+        name="hobbyName"
+        type="text"
         placeholder="Add New Hobby"
         value={content}
         onChange={(event) => setContent(event.target.value)}
@@ -24,7 +24,6 @@ export function HobbyForm({ handleSubmit }: FormProps) {
           <FiPlusCircle size={25} style={{ color: '#17456C' }} />
         </button>
       )}
-
     </form>
   );
 }

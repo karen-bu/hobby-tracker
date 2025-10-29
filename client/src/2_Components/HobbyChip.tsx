@@ -2,7 +2,8 @@ import { FiXCircle } from 'react-icons/fi';
 
 type HobbyChipProps = {
   label: string;
-  handleClick: () => void;
+  handleClick: () => Promise<void>;
+  // hobby: Hobby;
   index: number;
 };
 

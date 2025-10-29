@@ -52,3 +52,29 @@ export async function fetchHobbies() {
   }
   return (await res.json()) as Hobby[];
 }
+
+export async function addHobby(hobby: Hobby): Promise<Hobby> {
+  const req = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+    body: JSON.stringify(hobby),
+  };
+  const res = await fetch('/api/auth/hobbies', req);
+  if (!res.ok) throw new Error(`fetch error ${res.status}`);
+  return (await res.json()) as Hobby;
+}
+
+export async function deleteHobby(hobbyId: number) {
+  const req = {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+  };
+  const res = await fetch(`/api/auth/hobbies/${hobbyId}`, req);
+  if (!res.ok) throw new Error(`fetch error ${res.status}`);
+}
