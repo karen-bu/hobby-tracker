@@ -406,6 +406,7 @@
 
 .content-page.calendar {
   width: 100%;
+  height: 100%;
   justify-content: center;
   overflow: scroll;
 }
@@ -445,11 +446,10 @@
 .calendar.calendar-wrapper,
 .calendar.text-wrapper,
 .calendar.date-wrapper,
-.calendar.entries-wrapper,
+.calendar.entries-wrapper
 .calendar.input-wrapper {
   width: 100%;
   justify-content: center;
-  text-align: center;
 
   @media screen and (width <= 1024px) {
     padding-left: 0;
@@ -460,6 +460,16 @@
   position: relative;
   display: flex;
   justify-content: center;
+  height: 100%;
+}
+
+.calendar.input-wrapper.entrycard {
+  margin-top: 20px;
+
+}
+
+.calendar.entries-wrapper {
+  width: 100%;
   height: 100%;
 }
 
@@ -483,6 +493,10 @@
   text-align: center;
   font-family: Barlow, sans-serif;
   font-size: 18px;
+}
+
+.calendar textarea {
+font-family: Barlow, sans-serif;
 }
 
 .calendar.entry-plus {
@@ -532,7 +546,8 @@
   padding: 20px;
 }
 
-.calendar.form p {
+.calendar.form p,
+.calendar.entrycard p {
   font-size: 14px;
 }
 
@@ -544,4 +559,27 @@
 
 .calendar.form input {
   width: 100%;
+}
+
+.calendar.entrycard.row-100 {
+  width: 70%;
+  align-items: baseline;
+
+  @media screen and (width <=1024px) {
+    width: 100%;
+  }
+}
+
+.calendar.row-100.hobbyName {
+  display: flex;
+  justify-content: center;
+}
+
+.row-50.hoursSpent {
+display: flex;
+justify-content: right;
+}
+
+.hoursSpent {
+  text-align: right;
 }

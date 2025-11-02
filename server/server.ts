@@ -177,30 +177,51 @@ app.post('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
 
 // Path for deleting hobbies
 
-app.delete(
-  '/api/auth/hobbies/:hobbyId',
-  authMiddleware,
-  async (req, res, next) => {
+app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) => {
     try {
       const { hobbyId } = req.params;
-
       const sqlDeleteHobby = `
-  delete from "hobbies"
-  where "hobbyId" = $1
-  returning *;
-  `;
-
+          delete from "hobbies"
+          where "hobbyId" = $1
+          returning *;
+          `;
       const params = [hobbyId];
       const result = await db.query(sqlDeleteHobby, params);
       const deletedEntry = result.rows[0];
       if (!deletedEntry) {
-        throw new ClientError(404, `could not find hobby ${hobbyId}`);
+        throw new ClientError(404, `Could not find hobby ${hobbyId}.`);
       }
       res.status(204).json(deletedEntry);
     } catch (err) {
       next(err);
     }
   }
+);
+
+// Path for adding a new entry
+
+app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
+  try {
+    const { hobbyName, hoursSpent, rating, notes, entryDate } = req.body
+
+    const sqlInsertEntry = `
+      insert into "entries" ("userId", "hobbyId", "hoursSpent", "rating", "notes", "entryDate")
+      values ($1, $2, $3, $4, $5, $6)
+      returning *;
+    `;
+
+    const params = [req.user?.userId, hobby.hobbyId, hoursSpent, rating, notes, entryDate]
+    const result = await db.query(sqlInsertEntry, params)
+    const newEntry = result.rows[0]
+
+    if (!newEntry) throw new ClientError(404, `Unable to add entry.`)
+    res.status(201).json(newEntry)
+
+  }
+  catch (err) {
+    next(err)
+  }
+}
 );
 
 // OTHER PATHS
