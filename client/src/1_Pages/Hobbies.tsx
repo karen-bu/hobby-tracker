@@ -1,36 +1,16 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { FormEvent } from 'react';
 import { useUser } from '../2_Components/useUser';
-import { useNavigate } from 'react-router-dom';
 
 import { HobbyForm } from '../2_Components/HobbyForm';
 import { HobbyChip } from '../2_Components/HobbyChip';
 
-import { fetchHobbies } from '../lib';
 import { addHobby } from '../lib';
 import { deleteHobby } from '../lib';
 import { Hobby } from '../lib';
 
 export function Hobbies() {
-  const { user } = useUser();
-  const navigate = useNavigate();
 
-  const [hobbyArray, setHobbyArray] = useState<Hobby[]>([]);
-
-  useEffect(() => {
-    async function loadHobbies() {
-      try {
-        const hobbyArray = await fetchHobbies();
-        setHobbyArray(hobbyArray);
-      } catch (err) {
-        alert(`Error fetching hobbies: ${err}`);
-      }
-    }
-    if (user) {
-      loadHobbies();
-    } else {
-      navigate('/sign-in');
-    }
-  }, [user, navigate]);
+  const { hobbyArray, setHobbyArray } = useUser()
 
   async function submitHobbyForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

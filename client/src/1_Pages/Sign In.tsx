@@ -63,7 +63,7 @@ export function SignInPage() {
           <p>"Just Horsing Around"</p>
         </div>
         <div className="authentication row-100-right">
-          <Link to="/sign-up" style={{ color: '8FD481' }}>
+          <Link to="/sign-up" style={{ color: '#8FD481' }}>
             <p className="p-small">New User? Sign Up Here.</p>
           </Link>
         </div>
