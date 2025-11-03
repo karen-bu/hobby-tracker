@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addHobby, getHobbyId, type Entry } from '../lib';
+import { type Entry, addEntry } from '../lib';
 
 import { DateCalendar } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -15,7 +15,6 @@ import { EntryForm } from '../2_Components/EntryForm';
 import { EntryCard } from '../2_Components/EntryCard';
 import { useUser } from '../2_Components/useUser';
 
-import { Entry, addEntry } from '../lib';
 
 
 

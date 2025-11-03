@@ -23,13 +23,6 @@ export type Entry = {
   entryDate: Date;
 }
 
-const authKey = 'hobbyHorse.auth';
-
-type Auth = {
-  user: User;
-  token: string;
-};
-
 export function removeAuth(): void {
   localStorage.removeItem(authKey);
 }
