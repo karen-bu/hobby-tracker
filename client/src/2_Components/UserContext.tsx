@@ -64,8 +64,6 @@ export function UserProvider({ children }: Props) {
     }
     if (user) {
       loadHobbies();
-    } else {
-      navigate('/sign-in');
     }
   }, [user, navigate]);
 

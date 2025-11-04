@@ -2,10 +2,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FormEvent } from 'react';
 import { User } from '../lib';
-import { useUser } from '../2_Components/useUser';
-
 import hobbyHorseLogo from '../assets/HobbyHorse Logo Aqua.svg';
 import { AuthForm } from '../2_Components/AuthForm';
+import { useUser } from '../2_Components/useUser';
 
 export function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,9 +58,9 @@ export function SignUpPage() {
           <p>"Just Horsing Around"</p>
         </div>
         <div className="authentication row-100-right">
-          {/* <Link to="/sign-in" style={{ color: '#2E969A' }}>
+          <Link to="/sign-in" style={{ color: '#2E969A' }}>
             <p className="p-small">Existing User? Sign In Here.</p>
-          </Link> */}
+          </Link>
         </div>
         <AuthForm
           handleSubmit={handleSignUpForm}
