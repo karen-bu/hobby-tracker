@@ -27,7 +27,7 @@ type Hobby = {
 type Entry = {
   entryId: number;
   userId: number;
-  hobbyId: number;
+  // hobbyId?: number;
   hoursSpent?: number;
   rating?: number;
   notes?: number;
@@ -198,31 +198,55 @@ app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) 
   }
 );
 
+// Path for getting hobbyId
+
+// app.post('/api/auth/calendar', authMiddleware, async (req, res, next) => {
+//   try {
+//     const { hobbyName } = req.body;
+//     const sqlGetHobbyId =`
+//     select "hobbyId"
+//       from "entries"
+//       join "hobbies" using ("hobbyName")
+//       where "hobbyName" = $1;
+//     `
+
+//     const params = [hobbyName]
+//     const result = await db.query(sqlGetHobbyId, params);
+//     const hobbyId = result.rows[0];
+//     if (!hobbyId) throw new ClientError(404, `Could not find hobbyId for ${hobbyName}`)
+
+//     res.status(200).json(hobbyId)
+//   }
+//   catch (err){
+//     next(err)
+//   }
+// })
+
 // Path for adding a new entry
 
-app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
-  try {
-    const { hobbyName, hoursSpent, rating, notes, entryDate } = req.body
+// app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
+//   try {
+//     const { hobbyName, hoursSpent, rating, notes, entryDate } = req.body
 
-    const sqlInsertEntry = `
-      insert into "entries" ("userId", "hobbyId", "hoursSpent", "rating", "notes", "entryDate")
-      values ($1, $2, $3, $4, $5, $6)
-      returning *;
-    `;
+//     const sqlInsertEntry = `
+//       insert into "entries" ("userId", "hobbyId", "hoursSpent", "rating", "notes", "entryDate")
+//       values ($1, $2, $3, $4, $5, $6)
+//       returning *;
+//     `;
 
-    const params = [req.user?.userId, hobby.hobbyId, hoursSpent, rating, notes, entryDate]
-    const result = await db.query(sqlInsertEntry, params)
-    const newEntry = result.rows[0]
+//     const params = [req.user?.userId, hobby.hobbyId, hoursSpent, rating, notes, entryDate]
+//     const result = await db.query(sqlInsertEntry, params)
+//     const newEntry = result.rows[0]
 
-    if (!newEntry) throw new ClientError(404, `Unable to add entry.`)
-    res.status(201).json(newEntry)
+//     if (!newEntry) throw new ClientError(404, `Unable to add entry.`)
+//     res.status(201).json(newEntry)
 
-  }
-  catch (err) {
-    next(err)
-  }
-}
-);
+//   }
+//   catch (err) {
+//     next(err)
+//   }
+// }
+// );
 
 // OTHER PATHS
 

@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { Rating } from '@mui/material';
 import { FiXCircle } from 'react-icons/fi';
 import { TbEditCircle } from "react-icons/tb";
@@ -10,21 +8,21 @@ type EntryCardProps = {
   hoursSpent: number;
   rating: number;
   notes: string;
+  handleExpand: () => void;
+  isExpanded: boolean;
 }
 
-export function EntryCard({ hobbyName, hoursSpent, rating, notes }: EntryCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+export function EntryCard({ handleExpand, isExpanded, hobbyName, hoursSpent, rating, notes }: EntryCardProps) {
 
   return (
-
-    <div className='calendar input-wrapper entrycard'>
+    <div className='calendar input-wrapper entrycard' onClick={handleExpand}>
       <div className='calendar form-wrapper row-100'>
         <div
           className='calendar form' >
           <div>
             <p>{hobbyName}</p>
           </div>
-          <div className='calendar entries row-100'>
+          {isExpanded && (<div className='calendar entries row-100'>
             <div className='calendar row-100'>
               <div className='calendar row-50'>
                 <p>Hours Spent</p>
@@ -49,20 +47,18 @@ export function EntryCard({ hobbyName, hoursSpent, rating, notes }: EntryCardPro
                 <p>{notes}</p>
               </div>
             </div>
-          </div>
-          <div className='calendar row-100'>
-            <button className='calendar entry-plus'>
-              <TbEditCircle size={25} style={{ color: '#17456c' }} />
-            </button>
-            <button className='calendar entry-plus'>
-              <FiXCircle size={25} style={{ color: '#17456c' }} />
-            </button>
-          </div>
+            <div className='calendar row-100'>
+              <button className='calendar entry-plus'>
+                <TbEditCircle size={25} style={{ color: '#17456c' }} />
+              </button>
+              <button className='calendar entry-plus'>
+                <FiXCircle size={25} style={{ color: '#17456c' }} />
+              </button>
+            </div>
+          </div>)}
         </div>
-
       </div>
     </div >
-
   )
 
 }

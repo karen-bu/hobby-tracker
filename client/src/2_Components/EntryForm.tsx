@@ -1,29 +1,44 @@
+import * as React from 'react';
 import { useState, FormEvent } from "react";
 import { useUser } from "./useUser";
-
+import { type Entry } from '../lib';
+import dayjs from "dayjs";
 
 import { Autocomplete } from "@mui/material";
 import { TextField } from '@mui/material';
 import { Rating } from '@mui/material';
+import { PickerValue } from '@mui/x-date-pickers/internals';
 
 import { FiPlusCircle } from "react-icons/fi";
 import { FiXCircle } from "react-icons/fi";
 
-
 type EntryFormProps = {
-  date: string;
-  handleSubmit: (event: FormEvent<HTMLFormElement>) => void
+  date: PickerValue;
 }
 
-
-export function EntryForm({ date, handleSubmit }: EntryFormProps) {
-
-  const [isBlurred, setIsBlurred] = useState(true)
+export function EntryForm({ date }: EntryFormProps) {
   const { hobbyArray } = useUser()
-
   const hobbies = hobbyArray.map((hobby) => hobby.hobbyName)
+  const [isBlurred, setIsBlurred] = useState(true)
+  const [value, setValue] = React.useState<string | null>(hobbies[0]);
 
+  const formattedDate = dayjs(date).format('MMMM DD, YYYY');
 
+  async function submitEntryForm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+      const formData = new FormData(event.currentTarget);
+      const newEntry = Object.fromEntries(formData.entries()) as unknown as Entry
+      // const hobbyId = await getHobbyId(newEntry.hobbyName)
+      if (date) newEntry.entryDate = date?.toDate()
+      if (value) newEntry.hobbyName = value
+      // newEntry.hobbyId = hobbyId
+      console.log(newEntry)
+      // const addedEntry = await addEntry(newEntry)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   return (
     <div className='calendar input-wrapper'
@@ -31,17 +46,19 @@ export function EntryForm({ date, handleSubmit }: EntryFormProps) {
       <div className='calendar form-wrapper row-100'>
 
         <form
-          className='calendar form' onSubmit={handleSubmit} >
+          className='calendar form' onSubmit={submitEntryForm} >
           <div>
-            <p>Add new entry for {date}</p>
+            <p>Add new entry for {formattedDate}</p>
           </div>
           <Autocomplete
             sx={{ width: '100%' }}
             disablePortal
             options={hobbies}
             renderInput={(params) => <TextField {...params} label='Select Hobby' />}
-            onFocus={() => setIsBlurred(false)} />
-
+            onFocus={() => setIsBlurred(false)}
+            value={value || null}
+            onChange={(event: any, newValue: string | null) => setValue(newValue)}
+          />
           {isBlurred === false && (
 
             <div className='calendar entries row-100'>
