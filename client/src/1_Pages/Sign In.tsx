@@ -20,6 +20,7 @@ export function SignInPage() {
   useEffect(() => {
     if (user) {
       navigate('/');
+      console.log('redirecting')
     }
   }, [user, navigate]);
 

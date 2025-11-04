@@ -1,6 +1,5 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { type Entry, addEntry } from '../lib';
 
 import { DateCalendar } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -16,12 +15,11 @@ import { EntryCard } from '../2_Components/EntryCard';
 import { useUser } from '../2_Components/useUser';
 
 
-
-
 export function Calendar() {
   const { user } = useUser();
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false)
+
 
   useEffect(() => {
     if (!user) {
@@ -40,16 +38,9 @@ export function Calendar() {
     setDate(dayjs(date).add(1, 'day'));
   }
 
-  async function submitEntryForm(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    try {
-      const formData = new FormData(event.currentTarget);
-      const newEntry = Object.fromEntries(formData.entries()) as unknown as Entry
-      if (date) newEntry.entryDate = date?.toDate()
-      const addedEntry = await addEntry(newEntry)
-    } catch (err) {
-      console.error(err)
-    }
+  function expandEntryCard() {
+    if (isExpanded) setIsExpanded(false)
+    if (!isExpanded) setIsExpanded(true)
   }
 
   return (
@@ -79,10 +70,11 @@ export function Calendar() {
       </div>
       <div className='calendar entries-wrapper'>
         <div>
-          <EntryForm date={formattedDate} handleSubmit={submitEntryForm} />
+          <EntryForm date={date} />
         </div>
         <div>
-          <EntryCard hobbyName={'Hockey'} hoursSpent={5} rating={3}
+          <EntryCard handleExpand={expandEntryCard} isExpanded={isExpanded}
+            hobbyName={'Hockey'} hoursSpent={5} rating={3}
             notes={'Ante montes eleifend adipiscing aliquam tempus quisque vulputate commodo dignissim morbi maecenas nulla tellus mus a ullamcorper conubia a suspendisse.'} />
         </div>
       </div>

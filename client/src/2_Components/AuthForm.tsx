@@ -43,6 +43,7 @@ export function AuthForm({
           type="text"
           name="username"
           placeholder="Username"
+          autoComplete="off"
           onFocus={() => setUsernameFocus(focusColor)}
           onBlur={() => setUsernameFocus(blurColor)}
           style={{
@@ -60,6 +61,7 @@ export function AuthForm({
           type={inputType}
           name="password"
           placeholder="Password"
+          autoComplete="off"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           onFocus={() => setPasswordFocus(focusColor)}

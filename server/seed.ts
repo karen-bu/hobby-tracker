@@ -79,7 +79,7 @@ export async function main() {
         },
         {
             userId: userId,
-            hobbyId: hobbyList[1].hobbyId,
+            hobbyId: hobbyList[2].hobbyId,
             hoursSpent: 2,
             rating: 1,
             notes: 'All my plants died despite my best efforts. RIP.',

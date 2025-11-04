@@ -1,14 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FormEvent } from 'react';
 import { User } from '../lib';
-
 import hobbyHorseLogo from '../assets/HobbyHorse Logo Aqua.svg';
 import { AuthForm } from '../2_Components/AuthForm';
+import { useUser } from '../2_Components/useUser';
 
 export function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+      console.log('redirecting')
+    }
+  }, [user, navigate]);
 
   async function handleSignUpForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
