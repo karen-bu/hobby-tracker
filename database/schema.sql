@@ -26,6 +26,7 @@ CREATE TABLE "public"."entries" (
   "entryId" serial,
   "userId" int,
   FOREIGN KEY ("userId") REFERENCES "users"("userId") ON DELETE CASCADE,
+  "hobbyName" text NOT NULL,
   "hobbyId" int NOT NULL,
   "hoursSpent" int,
   "rating" int,

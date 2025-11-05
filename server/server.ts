@@ -6,6 +6,11 @@ import { ClientError, errorMiddleware, authMiddleware } from './lib/index.js';
 import argon2, { hash } from 'argon2';
 import jwt from 'jsonwebtoken';
 import { main } from './seed.js';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 type User = {
   userId: number;
@@ -27,10 +32,10 @@ type Hobby = {
 type Entry = {
   entryId: number;
   userId: number;
-  // hobbyId?: number;
+  hobbyId?: number;
   hoursSpent?: number;
   rating?: number;
-  notes?: number;
+  notes?: string;
   entryDate: Date;
   createdAt: Date;
 };
@@ -198,55 +203,80 @@ app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) 
   }
 );
 
-// Path for getting hobbyId
-
-// app.post('/api/auth/calendar', authMiddleware, async (req, res, next) => {
-//   try {
-//     const { hobbyName } = req.body;
-//     const sqlGetHobbyId =`
-//     select "hobbyId"
-//       from "entries"
-//       join "hobbies" using ("hobbyName")
-//       where "hobbyName" = $1;
-//     `
-
-//     const params = [hobbyName]
-//     const result = await db.query(sqlGetHobbyId, params);
-//     const hobbyId = result.rows[0];
-//     if (!hobbyId) throw new ClientError(404, `Could not find hobbyId for ${hobbyName}`)
-
-//     res.status(200).json(hobbyId)
-//   }
-//   catch (err){
-//     next(err)
-//   }
-// })
-
 // Path for adding a new entry
 
-// app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
-//   try {
-//     const { hobbyName, hoursSpent, rating, notes, entryDate } = req.body
+app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
+  try {
+    const { hobbyId, hobbyName, hoursSpent, rating, notes, entryDate } = req.body
 
-//     const sqlInsertEntry = `
-//       insert into "entries" ("userId", "hobbyId", "hoursSpent", "rating", "notes", "entryDate")
-//       values ($1, $2, $3, $4, $5, $6)
-//       returning *;
-//     `;
+    const sqlInsertEntry = `
+      insert into "entries" ("userId", "hobbyId", "hobbyName", "hoursSpent", "rating", "notes", "entryDate")
+      values ($1, $2, $3, $4, $5, $6, $7)
+      returning *;
+    `;
 
-//     const params = [req.user?.userId, hobby.hobbyId, hoursSpent, rating, notes, entryDate]
-//     const result = await db.query(sqlInsertEntry, params)
-//     const newEntry = result.rows[0]
+    const params = [req.user?.userId, hobbyId, hobbyName, hoursSpent, rating, notes, entryDate]
+    const result = await db.query(sqlInsertEntry, params)
+    const newEntry = result.rows[0]
 
-//     if (!newEntry) throw new ClientError(404, `Unable to add entry.`)
-//     res.status(201).json(newEntry)
+    if (!newEntry) throw new ClientError(404, `Unable to add entry.`)
+    res.status(201).json(newEntry)
 
-//   }
-//   catch (err) {
-//     next(err)
-//   }
-// }
-// );
+  }
+  catch (err) {
+    next(err)
+  }
+}
+);
+
+// Path for fetching entries on a date
+app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next) => {
+  try {
+    const { entryDate } = req.body
+    const date = dayjs(entryDate).utc()
+    const date1 = date.startOf('day').toISOString()
+    const date2 = date.endOf('day').toISOString()
+
+    console.log(date1, 'date1')
+    console.log(date2, 'date2')
+
+    const sqlSelectEntryByDate = `
+      select *
+      from "entries"
+      where "entryDate" between $1 and $2;
+      `
+    const params = [date1, date2]
+    const result = await db.query(sqlSelectEntryByDate, params)
+    const entriesByDate = result.rows
+    if (!entriesByDate) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
+    res.status(201).json(entriesByDate)
+  }
+  catch(err) {
+    next(err)
+  }
+})
+
+// Path for deleting entries
+app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) => {
+  try {
+    const { entryId } = req.params
+    const sqlDeleteEntry = `
+    delete from "entries"
+    where "entryId" = $1
+    returning *;
+    `;
+    const params = [entryId];
+    const result = await db.query(sqlDeleteEntry, params);
+    const deletedEntry = result.rows[0]
+    if (!deletedEntry) throw new ClientError(404, `Could not delete entry ${entryId}`)
+    res.status(204).json(deletedEntry);
+  }
+  catch (err) {
+    next(err)
+  }
+})
+
+
 
 // OTHER PATHS
 

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useState, FormEvent } from "react";
 import { useUser } from "./useUser";
-import { type Entry } from '../lib';
+import { type Entry, addEntry } from '../lib';
+
 import dayjs from "dayjs";
+
 
 import { Autocomplete } from "@mui/material";
 import { TextField } from '@mui/material';
@@ -17,24 +19,27 @@ type EntryFormProps = {
 }
 
 export function EntryForm({ date }: EntryFormProps) {
-  const { hobbyArray } = useUser()
+  const { hobbyArray, setHobbyArray } = useUser()
   const hobbies = hobbyArray.map((hobby) => hobby.hobbyName)
   const [isBlurred, setIsBlurred] = useState(true)
   const [value, setValue] = React.useState<string | null>(hobbies[0]);
-
+  const [hoursValue, setHoursValue] = useState('')
   const formattedDate = dayjs(date).format('MMMM DD, YYYY');
 
   async function submitEntryForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
+      const foundHobby = hobbyArray.find(
+        (obj) => obj.hobbyName === value
+      );
       const formData = new FormData(event.currentTarget);
       const newEntry = Object.fromEntries(formData.entries()) as unknown as Entry
-      // const hobbyId = await getHobbyId(newEntry.hobbyName)
       if (date) newEntry.entryDate = date?.toDate()
       if (value) newEntry.hobbyName = value
-      // newEntry.hobbyId = hobbyId
+      if (foundHobby) newEntry.hobbyId = foundHobby?.hobbyId
       console.log(newEntry)
-      // const addedEntry = await addEntry(newEntry)
+      const addedEntry = await addEntry(newEntry)
+      console.log(addedEntry)
     } catch (err) {
       console.error(err)
     }
@@ -69,6 +74,8 @@ export function EntryForm({ date }: EntryFormProps) {
                 <div className='calendar row-50'>
                   <input className='hoursSpent' name='hoursSpent'
                     onFocus={() => setIsBlurred(false)}
+                    value={hoursValue}
+                    onChange={(event) => setHoursValue(event.target.value)}
                   />
                 </div>
               </div>
@@ -78,7 +85,7 @@ export function EntryForm({ date }: EntryFormProps) {
                 </div>
                 <div className='calendar row-50 star-rating'
                   onFocus={() => setIsBlurred(false)}>
-                  <Rating precision={1} name='starRating' />
+                  <Rating precision={1} name='rating' />
                 </div>
               </div>
               <div className='calendar entries row-100'>
@@ -88,7 +95,7 @@ export function EntryForm({ date }: EntryFormProps) {
                 <div className='calendar row-100'>
                   <textarea
                     className='calendar textarea'
-                    name='entryNotes'
+                    name='notes'
                     onFocus={() => setIsBlurred(false)} />
                 </div>
                 <div className='calendar row-100'>

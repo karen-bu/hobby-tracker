@@ -1,3 +1,4 @@
+import { PickerValue } from "@mui/x-date-pickers/internals";
 
 export type User = {
   userId: number;
@@ -15,7 +16,9 @@ export type Entry = {
   hoursSpent: number;
   rating: number;
   entryDate: Date;
-  // hobbyId: number;
+  hobbyId: number;
+  notes: string;
+  entryId: number
 }
 
 const authKey = 'hobbyHorse.auth';
@@ -24,7 +27,6 @@ type Auth = {
   user: User;
   token: string;
 };
-
 
 export function removeAuth(): void {
   localStorage.removeItem(authKey);
@@ -98,22 +100,38 @@ export async function addEntry(entry: Entry): Promise<Entry> {
     },
     body: JSON.stringify(entry)
   }
-  const res = await fetch (`/api/auth/calendar`, req);
+  const res = await fetch(`/api/auth/calendar`, req);
   if (!res.ok) throw new Error(`fetch error ${res.status}`)
     return (await res.json()) as Entry
 }
 
-// export async function getHobbyId(hobbyName: string): Promise<number> {
-//   const req = {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${readToken()}`,
-//     },
-//     body: JSON.stringify(hobbyName)
-//   }
+export async function getEntryByDate(date: PickerValue): Promise<Entry[]> {
+  const sentDate = {'entryDate': date?.toDate()}
 
-//   const res = await fetch(`/api/auth/calendar`, req)
-//     if (!res.ok) throw new Error(`fetch error ${res.status}`)
-//       return (await res.json()) as number
-// }
+  // console.log('sentDate', sentDate)
+
+  const req = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+    body: JSON.stringify(sentDate)
+  }
+
+  const res = await fetch (`/api/auth/calendar/entryByDate`, req);
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+    return (await res.json()) as Entry[]
+}
+
+export async function deleteEntry(entryId: number) {
+  const req = {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+  };
+  const res = await fetch(`/api/auth/calendar/${entryId}`, req);
+  if (!res.ok) throw new Error(`fetch error ${res.status}`);
+}

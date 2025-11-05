@@ -1,21 +1,26 @@
 import { Rating } from '@mui/material';
 import { FiXCircle } from 'react-icons/fi';
 import { TbEditCircle } from "react-icons/tb";
-
+import { useState } from 'react';
 
 type EntryCardProps = {
   hobbyName: string;
   hoursSpent: number;
   rating: number;
   notes: string;
-  handleExpand: () => void;
-  isExpanded: boolean;
+  handleDelete: () => void;
 }
 
-export function EntryCard({ handleExpand, isExpanded, hobbyName, hoursSpent, rating, notes }: EntryCardProps) {
+export function EntryCard({ hobbyName, hoursSpent, rating, notes, handleDelete }: EntryCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  function expandEntryCard() {
+    if (isExpanded) setIsExpanded(false)
+    if (!isExpanded) setIsExpanded(true)
+  }
 
   return (
-    <div className='calendar input-wrapper entrycard' onClick={handleExpand}>
+    <div className='calendar input-wrapper entrycard' onClick={expandEntryCard}>
       <div className='calendar form-wrapper row-100'>
         <div
           className='calendar form' >
@@ -52,7 +57,7 @@ export function EntryCard({ handleExpand, isExpanded, hobbyName, hoursSpent, rat
                 <TbEditCircle size={25} style={{ color: '#17456c' }} />
               </button>
               <button className='calendar entry-plus'>
-                <FiXCircle size={25} style={{ color: '#17456c' }} />
+                <FiXCircle size={25} style={{ color: '#17456c' }} onClick={handleDelete} />
               </button>
             </div>
           </div>)}
