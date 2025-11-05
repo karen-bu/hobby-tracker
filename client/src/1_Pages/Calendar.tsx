@@ -5,7 +5,15 @@ import { DateCalendar } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { PickerValue } from '@mui/x-date-pickers/internals';
+
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+// dayjs.tz.setDefault('America/Los_Angeles');
+dayjs.tz.guess()
+
 
 import { FaAngleLeft } from 'react-icons/fa';
 import { FaAngleRight } from 'react-icons/fa';
@@ -13,7 +21,7 @@ import { FaAngleRight } from 'react-icons/fa';
 import { EntryForm } from '../2_Components/EntryForm';
 import { EntryCard } from '../2_Components/EntryCard';
 import { useUser } from '../2_Components/useUser';
-import { Entry } from '../lib';
+import { Entry, getEntryByDate } from '../lib';
 
 export function Calendar() {
   const { user } = useUser();
@@ -31,8 +39,15 @@ export function Calendar() {
   const [date, setDate] = useState<PickerValue>(dayjs());
   const formattedDate = dayjs(date).format('MMMM DD, YYYY');
 
-  function getYesterday() {
-    setDate(dayjs(date).subtract(1, 'day'));
+  async function getYesterday() {
+    setDate(dayjs(date).subtract(1, 'day'))
+    try {
+      const entryArray = await getEntryByDate(date)
+      console.log(entryArray)
+    }
+    catch (error) {
+      console.error()
+    }
   }
 
   function getTomorrow() {

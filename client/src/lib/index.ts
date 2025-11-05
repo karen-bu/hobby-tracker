@@ -1,3 +1,5 @@
+import { PickerValue } from "@mui/x-date-pickers/internals";
+import { PiArrowsOutLineHorizontalFill } from "react-icons/pi";
 
 export type User = {
   userId: number;
@@ -98,7 +100,25 @@ export async function addEntry(entry: Entry): Promise<Entry> {
     },
     body: JSON.stringify(entry)
   }
-  const res = await fetch (`/api/auth/calendar`, req);
+  const res = await fetch(`/api/auth/calendar`, req);
   if (!res.ok) throw new Error(`fetch error ${res.status}`)
     return (await res.json()) as Entry
+}
+
+export async function getEntryByDate(date: PickerValue): Promise<Entry[]> {
+  const sentDate = date?.toDate()
+
+  const req = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+    body: JSON.stringify(sentDate)
+  }
+
+  const res = await fetch (`/api/auth/calendar`, req);
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+    return (await res.json()) as Entry[]
+
 }

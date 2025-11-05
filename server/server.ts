@@ -6,6 +6,7 @@ import { ClientError, errorMiddleware, authMiddleware } from './lib/index.js';
 import argon2, { hash } from 'argon2';
 import jwt from 'jsonwebtoken';
 import { main } from './seed.js';
+import dayjs from 'dayjs';
 
 type User = {
   userId: number;
@@ -226,7 +227,30 @@ app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
 
 // Path for fetching entries on a date
 
-app.get('/api/auth/calendar', authMiddleware, async(req, res, next) => {})
+app.get('/api/auth/calendar', authMiddleware, async(req, res, next) => {
+  try {
+    const { date } = req.body
+
+    console.log(date, 'received date')
+
+    const date1 = date.subtract(1, 'day')
+    const date2 = date.add(1, 'day')
+
+    const sqlSelectEntryByDate = `
+    select "entryId"
+    from "entries"
+    where "entryDate" between $1 and $2;
+    `
+    const params = [date, date1]
+    const result = await db.query(sqlSelectEntryByDate, params)
+    const entriesByDate = result.rows
+    if (!entriesByDate) throw new ClientError(404, `Unable to fetch entries created between ${date} and ${date1}`)
+    res.status(201).json(entriesByDate)
+  }
+  catch(err) {
+    next(err)
+  }
+})
 
 // OTHER PATHS
 
