@@ -11,7 +11,6 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
-// dayjs.tz.setDefault('America/Los_Angeles');
 dayjs.tz.guess()
 
 
@@ -21,12 +20,11 @@ import { FaAngleRight } from 'react-icons/fa';
 import { EntryForm } from '../2_Components/EntryForm';
 import { EntryCard } from '../2_Components/EntryCard';
 import { useUser } from '../2_Components/useUser';
-import { Entry, getEntryByDate } from '../lib';
+import { Entry, getEntryByDate, deleteEntry } from '../lib';
 
 export function Calendar() {
   const { user } = useUser();
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(false)
   const [entryArray, setEntryArray] = useState<Entry[]>([])
 
 
@@ -34,30 +32,57 @@ export function Calendar() {
     if (!user) {
       navigate('/sign-in');
     }
-  });
+  }, [user]);
 
   const [date, setDate] = useState<PickerValue>(dayjs());
   const formattedDate = dayjs(date).format('MMMM DD, YYYY');
 
-  async function getYesterday() {
-    setDate(dayjs(date).subtract(1, 'day'))
+  async function handleDeleteEntry(entry: Entry) {
     try {
-      const entryArray = await getEntryByDate(date)
-      console.log(entryArray)
-    }
-    catch (error) {
-      console.error()
+      const deletedHobbyIndex = entryArray.findIndex(
+        (obj) => obj.entryId === entry.hobbyId
+      );
+      const newEntryArray = [...entryArray];
+      entryArray.splice(deletedHobbyIndex, 1);
+      setEntryArray(entryArray);
+      deleteEntry(entry.entryId);
+    } catch (err) {
+      console.error(err);
+      alert(`Error deleting hobby ${entry.entryId}`);
     }
   }
 
-  function getTomorrow() {
-    setDate(dayjs(date).add(1, 'day'));
-  }
 
-  function expandEntryCard() {
-    if (isExpanded) setIsExpanded(false)
-    if (!isExpanded) setIsExpanded(true)
-  }
+  const entries = entryArray.map((entry: Entry) =>
+    <div key={entry.entryId} >
+      <EntryCard
+        hobbyName={entry.hobbyName} hoursSpent={entry.hoursSpent} rating={entry.rating}
+        notes={entry.notes} handleDelete={() => handleDeleteEntry(entry)} />
+    </div>
+  )
+
+  useEffect(() => {
+    // console.log('Selected date:', date?.toISOString());
+    if (!date) return;
+    let mounted = true;
+    (async () => {
+      try {
+        // console.log('Fetching entries for date:', date.toISOString());
+        const entryArray = await getEntryByDate(date);
+        // console.log('Fetched entries:', entryArray);
+        if (mounted) setEntryArray(entryArray);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    )
+      ();
+
+    return () => {
+      mounted = false;
+    };
+
+  }, [date, entryArray]);
 
   return (
     <div className="content-page calendar">
@@ -73,13 +98,13 @@ export function Calendar() {
             <FaAngleLeft
               size={30}
               className="calendar-arrow"
-              onClick={getYesterday}
+              onClick={() => setDate(dayjs(date).subtract(1, 'day'))}
             />
             <p className="p-heading">{formattedDate}</p>
             <FaAngleRight
               size={30}
               className="calendar-arrow"
-              onClick={getTomorrow}
+              onClick={() => setDate(dayjs(date).add(1, 'day'))}
             />
           </div>
         </div>
@@ -89,9 +114,9 @@ export function Calendar() {
           <EntryForm date={date} />
         </div>
         <div>
-          <EntryCard handleExpand={expandEntryCard} isExpanded={isExpanded}
-            hobbyName={'Hockey'} hoursSpent={5} rating={3}
-            notes={'Ante montes eleifend adipiscing aliquam tempus quisque vulputate commodo dignissim morbi maecenas nulla tellus mus a ullamcorper conubia a suspendisse.'} />
+          {entries}
+        </div>
+        <div>
         </div>
       </div>
 

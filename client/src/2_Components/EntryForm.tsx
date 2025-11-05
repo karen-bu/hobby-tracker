@@ -19,7 +19,7 @@ type EntryFormProps = {
 }
 
 export function EntryForm({ date }: EntryFormProps) {
-  const { hobbyArray } = useUser()
+  const { hobbyArray, setHobbyArray } = useUser()
   const hobbies = hobbyArray.map((hobby) => hobby.hobbyName)
   const [isBlurred, setIsBlurred] = useState(true)
   const [value, setValue] = React.useState<string | null>(hobbies[0]);
