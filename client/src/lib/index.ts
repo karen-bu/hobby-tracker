@@ -15,7 +15,7 @@ export type Entry = {
   hoursSpent: number;
   rating: number;
   entryDate: Date;
-  // hobbyId: number;
+  hobbyId: number;
 }
 
 const authKey = 'hobbyHorse.auth';
@@ -102,18 +102,3 @@ export async function addEntry(entry: Entry): Promise<Entry> {
   if (!res.ok) throw new Error(`fetch error ${res.status}`)
     return (await res.json()) as Entry
 }
-
-// export async function getHobbyId(hobbyName: string): Promise<number> {
-//   const req = {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${readToken()}`,
-//     },
-//     body: JSON.stringify(hobbyName)
-//   }
-
-//   const res = await fetch(`/api/auth/calendar`, req)
-//     if (!res.ok) throw new Error(`fetch error ${res.status}`)
-//       return (await res.json()) as number
-// }

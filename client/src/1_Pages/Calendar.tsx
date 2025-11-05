@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DateCalendar } from '@mui/x-date-pickers';
@@ -13,12 +13,13 @@ import { FaAngleRight } from 'react-icons/fa';
 import { EntryForm } from '../2_Components/EntryForm';
 import { EntryCard } from '../2_Components/EntryCard';
 import { useUser } from '../2_Components/useUser';
-
+import { Entry } from '../lib';
 
 export function Calendar() {
   const { user } = useUser();
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false)
+  const [entryArray, setEntryArray] = useState<Entry[]>([])
 
 
   useEffect(() => {

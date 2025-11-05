@@ -64,6 +64,7 @@ export async function main() {
         {
             userId: userId,
             hobbyId: hobbyList[0].hobbyId,
+            hobbyName: "Drawing",
             hoursSpent: 4,
             rating: 5,
             notes: 'Finished 3 pages of a comic today, though my goal was 4 pages.',
@@ -72,6 +73,7 @@ export async function main() {
         {
             userId: userId,
             hobbyId: hobbyList[1].hobbyId,
+            hobbyName: "Hockey",
             hoursSpent: 6,
             rating: 5,
             notes: 'Worked on defensive skating and scored a goal in the scrimmage!',
@@ -80,6 +82,7 @@ export async function main() {
         {
             userId: userId,
             hobbyId: hobbyList[2].hobbyId,
+            hobbyName: "Gardening",
             hoursSpent: 2,
             rating: 1,
             notes: 'All my plants died despite my best efforts. RIP.',
@@ -98,10 +101,10 @@ export async function main() {
         console.log('Default entries already exist.');
     } else {
           for (const entry of entries) {
-          const { userId, hobbyId, hoursSpent, rating, notes, entryDate } = entry;
+          const { userId, hobbyName, hobbyId, hoursSpent, rating, notes, entryDate } = entry;
           await db.query(
-              'INSERT INTO "entries" ("userId", "hobbyId", "hoursSpent", "rating", "notes", "entryDate") VALUES ($1, $2, $3, $4, $5, $6)',
-              [userId, hobbyId, hoursSpent, rating, notes, entryDate]
+              'INSERT INTO "entries" ("userId", "hobbyName", "hobbyId", "hoursSpent", "rating", "notes", "entryDate") VALUES ($1, $2, $3, $4, $5, $6, $7)',
+              [userId, hobbyName, hobbyId, hoursSpent, rating, notes, entryDate]
           );
     }
       console.log('Default entries created.');
