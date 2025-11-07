@@ -20,13 +20,13 @@ import { FaAngleRight } from 'react-icons/fa';
 import { EntryForm } from '../2_Components/EntryForm';
 import { EntryCard } from '../2_Components/EntryCard';
 import { useUser } from '../2_Components/useUser';
-import { Entry, getEntryByDate, deleteEntry } from '../lib';
+import { Entry, deleteEntry } from '../lib';
 
 export function Calendar() {
   const { user } = useUser();
   const navigate = useNavigate();
-  const [entryArray, setEntryArray] = useState<Entry[]>([])
 
+  const { entryArray, setEntryArray, date, setDate } = useUser()
 
   useEffect(() => {
     if (!user) {
@@ -34,7 +34,6 @@ export function Calendar() {
     }
   }, [user]);
 
-  const [date, setDate] = useState<PickerValue>(dayjs());
   const formattedDate = dayjs(date).format('MMMM DD, YYYY');
 
   async function handleDeleteEntry(entry: Entry) {
@@ -42,47 +41,43 @@ export function Calendar() {
       const deletedHobbyIndex = entryArray.findIndex(
         (obj) => obj.entryId === entry.hobbyId
       );
-      const newEntryArray = [...entryArray];
       entryArray.splice(deletedHobbyIndex, 1);
-      setEntryArray(entryArray);
       deleteEntry(entry.entryId);
+      setEntryArray([...entryArray])
     } catch (err) {
       console.error(err);
       alert(`Error deleting hobby ${entry.entryId}`);
     }
   }
 
-
   const entries = entryArray.map((entry: Entry) =>
     <div key={entry.entryId} >
       <EntryCard
         hobbyName={entry.hobbyName} hoursSpent={entry.hoursSpent} rating={entry.rating}
-        notes={entry.notes} handleDelete={() => handleDeleteEntry(entry)} />
+        notes={entry.notes} entryId={entry.entryId} handleDelete={() => handleDeleteEntry(entry)} />
     </div>
   )
 
-  useEffect(() => {
-    // console.log('Selected date:', date?.toISOString());
-    if (!date) return;
-    let mounted = true;
-    (async () => {
-      try {
-        // console.log('Fetching entries for date:', date.toISOString());
-        const entryArray = await getEntryByDate(date);
-        // console.log('Fetched entries:', entryArray);
-        if (mounted) setEntryArray(entryArray);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    )
-      ();
+  // useEffect(() => {
+  //   // console.log('Selected date:', date?.toISOString());
+  //   if (!date) return;
+  //   let mounted = true;
+  //   (async () => {
+  //     try {
+  //       const entryArray = await getEntryByDate(date);
+  //       if (mounted) setEntryArray(entryArray);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  //   )
+  //     ();
 
-    return () => {
-      mounted = false;
-    };
+  //   return () => {
+  //     mounted = false;
+  //   };
 
-  }, [date, entryArray]);
+  // }, [date, entryArray]);
 
   return (
     <div className="content-page calendar">

@@ -19,7 +19,7 @@ type EntryFormProps = {
 }
 
 export function EntryForm({ date }: EntryFormProps) {
-  const { hobbyArray, setHobbyArray } = useUser()
+  const { hobbyArray, setHobbyArray, entryArray, setEntryArray } = useUser()
   const hobbies = hobbyArray.map((hobby) => hobby.hobbyName)
   const [isBlurred, setIsBlurred] = useState(true)
   const [value, setValue] = React.useState<string | null>(hobbies[0]);
@@ -37,9 +37,8 @@ export function EntryForm({ date }: EntryFormProps) {
       if (date) newEntry.entryDate = date?.toDate()
       if (value) newEntry.hobbyName = value
       if (foundHobby) newEntry.hobbyId = foundHobby?.hobbyId
-      console.log(newEntry)
       const addedEntry = await addEntry(newEntry)
-      console.log(addedEntry)
+      setEntryArray([...entryArray, addedEntry])
     } catch (err) {
       console.error(err)
     }
