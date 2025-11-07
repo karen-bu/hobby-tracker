@@ -108,9 +108,9 @@ export function Calendar() {
         <div>
           <EntryForm date={date} />
         </div>
-        <div>
-          {entries}
-        </div>
+
+        {entries}
+
         <div>
         </div>
       </div>
