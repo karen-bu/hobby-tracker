@@ -39,10 +39,10 @@ export function Calendar() {
   async function handleDeleteEntry(entry: Entry) {
     try {
       const deletedHobbyIndex = entryArray.findIndex(
-        (obj) => obj.entryId === entry.hobbyId
+        (obj) => obj.entryId === entry.entryId
       );
-      entryArray.splice(deletedHobbyIndex, 1);
       deleteEntry(entry.entryId);
+      entryArray.splice(deletedHobbyIndex, 1);
       setEntryArray([...entryArray])
     } catch (err) {
       console.error(err);
