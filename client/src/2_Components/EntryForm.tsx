@@ -21,6 +21,7 @@ type EntryFormProps = {
 export function EntryForm({ date }: EntryFormProps) {
   const { hobbyArray, setHobbyArray, entryArray, setEntryArray } = useUser()
   const hobbies = hobbyArray.map((hobby) => hobby.hobbyName)
+  const entryHobbies = entryArray.map((hobby) => hobby.hobbyName)
   const [isBlurred, setIsBlurred] = useState(true)
   const [value, setValue] = React.useState<string | null>(hobbies[0]);
   const [hoursValue, setHoursValue] = useState('')
@@ -62,6 +63,7 @@ export function EntryForm({ date }: EntryFormProps) {
             onFocus={() => setIsBlurred(false)}
             value={value || null}
             onChange={(event: any, newValue: string | null) => setValue(newValue)}
+            getOptionDisabled={(option) => entryHobbies.includes(option)}
           />
           {isBlurred === false && (
 
