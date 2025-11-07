@@ -135,3 +135,18 @@ export async function deleteEntry(entryId: number) {
   const res = await fetch(`/api/auth/calendar/${entryId}`, req);
   if (!res.ok) throw new Error(`fetch error ${res.status}`);
 }
+
+export async function editEntry(entry: Entry) {
+  const req = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+    body: JSON.stringify(entry)
+  };
+
+  const res = await fetch(`/api/calendar/${entry.entryId}`, req)
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+  return (await res.json()) as Entry
+}

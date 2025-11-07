@@ -1,7 +1,9 @@
 import { ReactNode, createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, saveAuth, removeAuth, readToken, readUser } from '../lib';
-import { Hobby, fetchHobbies } from '../lib';
+import { Hobby, fetchHobbies, Entry, getEntryByDate } from '../lib';
+import { PickerValue } from '@mui/x-date-pickers/internals';
+import dayjs from 'dayjs';
 
 export type UserContextValues = {
   user: User | undefined;
@@ -10,6 +12,10 @@ export type UserContextValues = {
   handleSignOut: () => void;
   hobbyArray: Hobby[];
   setHobbyArray: (hobbyArray: Hobby[]) => void;
+  date: PickerValue;
+  entryArray: Entry[];
+  setEntryArray: (entryArray: Entry[]) => void;
+  setDate: (date: PickerValue) => void;
 };
 
 export const UserContext = createContext<UserContextValues>({
@@ -22,7 +28,12 @@ export const UserContext = createContext<UserContextValues>({
     throw new Error('No UserProvider');
   },
   hobbyArray: [],
-  setHobbyArray: () => useState<Hobby[]>([])
+  setHobbyArray: () => useState<Hobby[]>([]),
+  date: dayjs(),
+  entryArray: [],
+  setEntryArray: () => useState<Entry[]>([]),
+  setDate: () => useState<PickerValue>(dayjs())
+
 });
 
 type Props = {
@@ -33,6 +44,9 @@ export function UserProvider({ children }: Props) {
   const [user, setUser] = useState<User>();
   const [token, setToken] = useState<string>();
   const [hobbyArray, setHobbyArray] = useState<Hobby[]>([])
+  const [date, setDate] = useState<PickerValue>(dayjs());
+  const [entryArray, setEntryArray] = useState<Entry[]>([])
+
 
   const navigate = useNavigate()
 
@@ -67,7 +81,28 @@ export function UserProvider({ children }: Props) {
     }
   }, [user, navigate]);
 
-  const contextValues = { user, token, hobbyArray, setHobbyArray, handleSignIn, handleSignOut };
+  useEffect(() => {
+    // console.log('Selected date:', date?.toISOString());
+    if (!date) return;
+    let mounted = true;
+    (async () => {
+      try {
+        const entryArray = await getEntryByDate(date);
+        if (mounted) setEntryArray(entryArray);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    )
+      ();
+
+    return () => {
+      mounted = false;
+    };
+
+  }, [date]);
+
+  const contextValues = { user, token, hobbyArray, setHobbyArray, handleSignIn, handleSignOut, date, entryArray, setEntryArray, setDate };
 
   return (
     <UserContext.Provider value={contextValues}>

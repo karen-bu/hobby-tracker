@@ -143,8 +143,11 @@ app.get('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
     const sqlGetHobbies = `
     select *
       from "hobbies"
+      where "userId" = $1;
     `;
-    const result = await db.query<Hobby>(sqlGetHobbies);
+
+    const params = [req.user?.userId]
+    const result = await db.query<Hobby>(sqlGetHobbies, params);
     if (!result) {
       throw new ClientError(404, 'Cannot fetch list of hobbies');
     }
@@ -188,9 +191,10 @@ app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) 
       const sqlDeleteHobby = `
           delete from "hobbies"
           where "hobbyId" = $1
+          and "userId" = $2
           returning *;
           `;
-      const params = [hobbyId];
+      const params = [hobbyId, req.user?.userId];
       const result = await db.query(sqlDeleteHobby, params);
       const deletedEntry = result.rows[0];
       if (!deletedEntry) {
@@ -237,15 +241,12 @@ app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next)
     const date1 = date.startOf('day').toISOString()
     const date2 = date.endOf('day').toISOString()
 
-    console.log(date1, 'date1')
-    console.log(date2, 'date2')
-
     const sqlSelectEntryByDate = `
       select *
       from "entries"
-      where "entryDate" between $1 and $2;
+      where "entryDate" between $1 and $2 AND "userId" = $3;
       `
-    const params = [date1, date2]
+    const params = [date1, date2, req.user?.userId]
     const result = await db.query(sqlSelectEntryByDate, params)
     const entriesByDate = result.rows
     if (!entriesByDate) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
@@ -262,10 +263,10 @@ app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next)
     const { entryId } = req.params
     const sqlDeleteEntry = `
     delete from "entries"
-    where "entryId" = $1
+    where "entryId" = $1 AND "userId" = $2
     returning *;
     `;
-    const params = [entryId];
+    const params = [entryId, req.user?.userId];
     const result = await db.query(sqlDeleteEntry, params);
     const deletedEntry = result.rows[0]
     if (!deletedEntry) throw new ClientError(404, `Could not delete entry ${entryId}`)
@@ -276,6 +277,32 @@ app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next)
   }
 })
 
+// Path for updating entries
+
+app.put('/api/calendar/:entryId', authMiddleware, async (req, res, next) => {
+  try{
+    const entryId = Number(req.params.entryId)
+    const { hoursSpent, rating, notes } = req.body
+
+    const sqlUpdateEntry = `
+    update "entries"
+      set "hoursSpent" = $1,
+          "rating" = $2,
+          "notes" = $3
+          where "entryId" = $4
+          AND "userId" = $5
+          returning *
+    `
+    const params = [hoursSpent, rating, notes, entryId, req.user?.userId]
+    const result = await db.query(sqlUpdateEntry, params)
+    const updatedEntry = result.rows[0]
+    if (!updatedEntry) throw new ClientError(404, `Could not update entry ${entryId}`)
+    res.status(201).json(updatedEntry)
+  }
+  catch(err) {
+    next(err)
+  }
+})
 
 
 // OTHER PATHS
