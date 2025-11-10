@@ -597,3 +597,30 @@ justify-content: right;
 }
 
 /* METRICS PAGE */
+
+.metrics.row-100 {
+  display: flex;
+  justify-content: center;
+}
+
+.content-page.metrics {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.content-page.metrics h1,
+.content-page.metrics h2,
+.content-page.metrics h3,
+.content-page.metrics h4,
+.content-page.metrics p {
+  text-align: center;
+}
+
+.content-page.metrics h1 {
+  font-size: 3rem;
+}
+
+.content-page.metrics h3 {
+  font-size: 1.5rem;
+}
