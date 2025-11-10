@@ -28,6 +28,9 @@ type Auth = {
   token: string;
 };
 
+
+// Functions for user management
+
 export function removeAuth(): void {
   localStorage.removeItem(authKey);
 }
@@ -49,6 +52,7 @@ export function readToken(): string | undefined {
   return (JSON.parse(auth) as Auth).token;
 }
 
+// Function for fetching list of hobbies
 export async function fetchHobbies() {
   const req = {
     method: 'GET',
@@ -65,6 +69,7 @@ export async function fetchHobbies() {
   return (await res.json()) as Hobby[];
 }
 
+// Function for adding to list of hobbies
 export async function addHobby(hobby: Hobby): Promise<Hobby> {
   const req = {
     method: 'POST',
@@ -79,6 +84,7 @@ export async function addHobby(hobby: Hobby): Promise<Hobby> {
   return (await res.json()) as Hobby;
 }
 
+// Function for deleting from list of hobbies
 export async function deleteHobby(hobbyId: number) {
   const req = {
     method: 'DELETE',
@@ -91,6 +97,7 @@ export async function deleteHobby(hobbyId: number) {
   if (!res.ok) throw new Error(`fetch error ${res.status}`);
 }
 
+// Function for adding new journal entry on a particular date
 export async function addEntry(entry: Entry): Promise<Entry> {
   const req = {
     method: 'POST',
@@ -105,11 +112,9 @@ export async function addEntry(entry: Entry): Promise<Entry> {
     return (await res.json()) as Entry
 }
 
+// Function for fetching journal entries on a particular date
 export async function getEntryByDate(date: PickerValue): Promise<Entry[]> {
   const sentDate = {'entryDate': date?.toDate()}
-
-  // console.log('sentDate', sentDate)
-
   const req = {
     method: 'POST',
     headers: {
@@ -124,6 +129,7 @@ export async function getEntryByDate(date: PickerValue): Promise<Entry[]> {
     return (await res.json()) as Entry[]
 }
 
+// Function for deleting a journal entry
 export async function deleteEntry(entryId: number) {
   const req = {
     method: 'DELETE',
@@ -136,6 +142,7 @@ export async function deleteEntry(entryId: number) {
   if (!res.ok) throw new Error(`fetch error ${res.status}`);
 }
 
+// Function for editing a journal entry
 export async function editEntry(entry: Entry) {
   const req = {
     method: 'PUT',
@@ -145,8 +152,21 @@ export async function editEntry(entry: Entry) {
     },
     body: JSON.stringify(entry)
   };
-
-  const res = await fetch(`/api/calendar/${entry.entryId}`, req)
+  const res = await fetch(`/api/auth/calendar/${entry.entryId}`, req)
   if (!res.ok) throw new Error(`fetch error ${res.status}`)
   return (await res.json()) as Entry
+}
+
+// Function for getting total hours spent on hobbies
+export async function getTotalHours() {
+  const req = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    }
+  }
+  const res = await fetch(`/api/auth/metrics`, req)
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+    return (await res.json()) as Number
 }

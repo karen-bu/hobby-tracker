@@ -279,8 +279,8 @@ app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next)
 
 // Path for updating entries
 
-app.put('/api/calendar/:entryId', authMiddleware, async (req, res, next) => {
-  try{
+app.put('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) => {
+  try {
     const entryId = Number(req.params.entryId)
     const { hoursSpent, rating, notes } = req.body
 
@@ -298,6 +298,27 @@ app.put('/api/calendar/:entryId', authMiddleware, async (req, res, next) => {
     const updatedEntry = result.rows[0]
     if (!updatedEntry) throw new ClientError(404, `Could not update entry ${entryId}`)
     res.status(201).json(updatedEntry)
+  }
+  catch(err) {
+    next(err)
+  }
+})
+
+// Path for getting total hours spent
+app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
+  try {
+    const { user } = req.params
+    const sqlGetHours = `
+      select sum("hoursSpent")
+      from "entries"
+      where "userId" = $1;
+    `
+    const params = [req.user?.userId]
+    const result = await db.query(sqlGetHours, params)
+    const totalHours = result.rows[0]
+    if (!totalHours) throw new ClientError(404, `Could not find total hours`)
+    res.status(201).json(totalHours)
+    console.log(totalHours)
   }
   catch(err) {
     next(err)
