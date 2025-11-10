@@ -40,8 +40,6 @@ type Entry = {
   createdAt: Date;
 };
 
-// type Goal = {}
-
 export const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -65,12 +63,10 @@ app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello, World!' });
 });
 
-// USER MANAGEMENT
-
 const hashKey = process.env.TOKEN_SECRET;
 if (!hashKey) throw new Error('TOKEN_SECRET not found!');
 
-// Path for signing up
+// ~*~*~*~*~~*~**~*~ Path for signing up ~*~*~*~*~~*~**~*~
 
 app.post('/api/auth/sign-up', async (req, res, next) => {
   try {
@@ -100,7 +96,7 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
   }
 });
 
-// Path for signing in
+// ~*~*~*~*~~*~**~*~ Path for signing in ~*~*~*~*~~*~**~*~
 
 app.post('/api/auth/sign-in', async (req, res, next) => {
   try {
@@ -134,9 +130,7 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
   }
 });
 
-// HOBBIES PAGE
-
-// Path for getting hobbies
+// ~*~*~*~*~~*~**~*~ Path for getting hobbies ~*~*~*~*~~*~**~*~
 
 app.get('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
   try {
@@ -145,7 +139,6 @@ app.get('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
       from "hobbies"
       where "userId" = $1;
     `;
-
     const params = [req.user?.userId]
     const result = await db.query<Hobby>(sqlGetHobbies, params);
     if (!result) {
@@ -157,7 +150,7 @@ app.get('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Path for adding hobbies
+// ~*~*~*~*~~*~**~*~ Path for adding hobbies ~*~*~*~*~~*~**~*~
 
 app.post('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
   try {
@@ -183,7 +176,7 @@ app.post('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
   }
 });
 
-// Path for deleting hobbies
+// ~*~*~*~*~~*~**~*~ Path for deleting hobbies ~*~*~*~*~~*~**~*~
 
 app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) => {
     try {
@@ -207,7 +200,7 @@ app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) 
   }
 );
 
-// Path for adding a new entry
+// ~*~*~*~*~~*~**~*~ Path for adding a new entry ~*~*~*~*~~*~**~*~
 
 app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
   try {
@@ -233,7 +226,7 @@ app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
 }
 );
 
-// Path for fetching entries on a date
+// ~*~*~*~*~~*~**~*~ Path for fetching entries on a date ~*~*~*~*~~*~**~*~
 app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next) => {
   try {
     const { entryDate } = req.body
@@ -257,7 +250,9 @@ app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next)
   }
 })
 
-// Path for deleting entries
+
+
+// ~*~*~*~*~~*~**~*~ Path for deleting entries ~*~*~*~*~~*~**~*~
 app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) => {
   try {
     const { entryId } = req.params
@@ -277,7 +272,7 @@ app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next)
   }
 })
 
-// Path for updating entries
+// ~*~*~*~*~~*~**~*~ Path for updating entries ~*~*~*~*~~*~**~*~
 
 app.put('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) => {
   try {
@@ -304,26 +299,57 @@ app.put('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) =>
   }
 })
 
-// Path for getting total hours spent
+
+// ~*~*~*~*~~*~**~*~ Path for getting total hours spent on hobbies in a week ~*~*~*~*~~*~**~*~
 app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
   try {
     const { user } = req.params
+    const { today } = req.body
+    const date = dayjs(today).utc()
+    const date1 = date.startOf('week').toISOString()
+    const date2 = date.endOf('week').toISOString()
+
     const sqlGetHours = `
       select sum("hoursSpent")
       from "entries"
-      where "userId" = $1;
+      where "entryDate" between $1 and $2 AND "userId" = $3;
     `
-    const params = [req.user?.userId]
+    const params = [date1, date2, req.user?.userId]
     const result = await db.query(sqlGetHours, params)
     const totalHours = result.rows[0]
-    if (!totalHours) throw new ClientError(404, `Could not find total hours`)
+    if (!totalHours) throw new ClientError(404, `Could not find total hours spent on hobbies between ${date1} and ${date2}`)
     res.status(201).json(totalHours)
-    console.log(totalHours)
   }
   catch(err) {
     next(err)
   }
 })
+
+// ~*~*~*~*~~*~**~*~ Path for fetching entries in a week ~*~*~*~*~~*~**~*~
+app.get('/api/auth/metrics/entriesByWeek', authMiddleware, async(req, res, next) => {
+  try {
+    const { user } = req.params
+    const { today } = req.body
+    const date = dayjs(today).utc()
+    const date1 = date.startOf('week').toISOString()
+    const date2 = date.endOf('week').toISOString()
+
+    const sqlSelectEntriesByWeek = `
+      select *
+      from "entries"
+      where "entryDate" between $1 and $2 AND "userId" = $3;
+      `
+    const params = [date1, date2, req.user?.userId]
+    const result = await db.query(sqlSelectEntriesByWeek, params)
+    const entriesByWeek = result.rows
+    if (!entriesByWeek) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
+    res.status(201).json(entriesByWeek)
+  }
+  catch (err) {
+    next(err)
+  }
+})
+
 
 
 // OTHER PATHS

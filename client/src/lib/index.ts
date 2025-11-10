@@ -1,4 +1,5 @@
 import { PickerValue } from "@mui/x-date-pickers/internals";
+import dayjs, { Dayjs } from "dayjs";
 
 export type User = {
   userId: number;
@@ -129,6 +130,35 @@ export async function getEntryByDate(date: PickerValue): Promise<Entry[]> {
     return (await res.json()) as Entry[]
 }
 
+// Function for fetching journal entries for a particular week
+export async function getEntryByWeek(date: PickerValue): Promise<Entry[]> {
+  const req = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+  }
+  const res = await fetch ('/api/auth/metrics/entriesByWeek', req);
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+    return (await res.json()) as Entry[]
+}
+
+// Function for getting total hours spent on hobbies in a week
+export async function getTotalHours(date: PickerValue) {
+  const req = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    }
+  }
+  const res = await fetch(`/api/auth/metrics`, req)
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+    return await res.json()
+}
+
+
 // Function for deleting a journal entry
 export async function deleteEntry(entryId: number) {
   const req = {
@@ -155,18 +185,4 @@ export async function editEntry(entry: Entry) {
   const res = await fetch(`/api/auth/calendar/${entry.entryId}`, req)
   if (!res.ok) throw new Error(`fetch error ${res.status}`)
   return (await res.json()) as Entry
-}
-
-// Function for getting total hours spent on hobbies
-export async function getTotalHours() {
-  const req = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${readToken()}`,
-    }
-  }
-  const res = await fetch(`/api/auth/metrics`, req)
-  if (!res.ok) throw new Error(`fetch error ${res.status}`)
-    return (await res.json()) as Number
 }

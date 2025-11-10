@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DateCalendar } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { PickerValue } from '@mui/x-date-pickers/internals';
+import { getEntryByDate } from '../lib';
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -58,26 +58,23 @@ export function Calendar() {
     </div>
   )
 
-  // useEffect(() => {
-  //   // console.log('Selected date:', date?.toISOString());
-  //   if (!date) return;
-  //   let mounted = true;
-  //   (async () => {
-  //     try {
-  //       const entryArray = await getEntryByDate(date);
-  //       if (mounted) setEntryArray(entryArray);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }
-  //   )
-  //     ();
-
-  //   return () => {
-  //     mounted = false;
-  //   };
-
-  // }, [date, entryArray]);
+  useEffect(() => {
+    if (!date) return;
+    let mounted = true;
+    (async () => {
+      try {
+        const entryArray = await getEntryByDate(date);
+        if (mounted) setEntryArray(entryArray);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    )
+      ();
+    return () => {
+      mounted = false;
+    };
+  }, [date]);
 
   return (
     <div className="content-page calendar">
