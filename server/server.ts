@@ -325,8 +325,8 @@ app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
   }
 })
 
-// ~*~*~*~*~~*~**~*~ Path for fetching entries in a week ~*~*~*~*~~*~**~*~
-app.get('/api/auth/metrics/entriesByWeek', authMiddleware, async(req, res, next) => {
+// ~*~*~*~*~~*~**~*~ Path for fetching entries from this week ~*~*~*~*~~*~**~*~
+app.get('/api/auth/metrics/entriesThisWeek', authMiddleware, async(req, res, next) => {
   try {
     const { user } = req.params
     const { today } = req.body
@@ -350,7 +350,83 @@ app.get('/api/auth/metrics/entriesByWeek', authMiddleware, async(req, res, next)
   }
 })
 
+// ~*~*~*~*~~*~**~*~ Path for fetching entries from 4 weeks ago ~*~*~*~*~~*~**~*~
+app.get('/api/auth/metrics/entries4Weeks', authMiddleware, async(req, res, next) => {
+  try {
+    const { user } = req.params
+    const { today } = req.body
+    const date = dayjs(today).utc()
+    const date1 = date.subtract(4, 'week').startOf('week').toISOString()
+    const date2 = date.subtract(4, 'week').endOf('week').toISOString()
 
+    const sqlSelectEntries4Weeks = `
+      select *
+      from "entries"
+      where "entryDate" between $1 and $2 AND "userId" = $3;
+    `
+
+    const params = [date1, date2, req.user?.userId]
+    const result = await db.query(sqlSelectEntries4Weeks, params)
+    const entries4Weeks = result.rows
+    if (!entries4Weeks) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
+    res.status(201).json(entries4Weeks)
+  }
+  catch (err) {
+    next (err)
+  }
+})
+
+// // ~*~*~*~*~~*~**~*~ Path for fetching entries from 3 weeks ago ~*~*~*~*~~*~**~*~
+app.get('/api/auth/metrics/entries3Weeks', authMiddleware, async(req,res,next) => {
+  try {
+    const { user } = req.params
+    const { today } = req.body
+    const date = dayjs(today).utc()
+    const date1 = date.subtract(3, 'week').startOf('week').toISOString()
+    const date2 = date.subtract(3, 'week').endOf('week').toISOString()
+
+   const sqlSelectEntries3Weeks = `
+      select *
+      from "entries"
+      where "entryDate" between $1 and $2 AND "userId" = $3;
+    `
+
+    const params = [date1, date2, req.user?.userId]
+    const result = await db.query(sqlSelectEntries3Weeks, params)
+    const entries3Weeks = result.rows
+    if (!entries3Weeks) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
+    res.status(201).json(entries3Weeks)
+  }
+  catch(err) {
+    next(err)
+  }
+})
+
+// // ~*~*~*~*~~*~**~*~ Path for fetching entries from 2 weeks ago ~*~*~*~*~~*~**~*~
+app.get('/api/auth/metrics/entries2Weeks', authMiddleware, async(req, res, next) => {
+  try {
+    const { user } = req.params
+    const { today } = req.body
+    const date = dayjs(today).utc()
+    const date1 = date.subtract(2, 'week').startOf('week').toISOString()
+    const date2 = date.subtract(2, 'week').endOf('week').toISOString()
+
+    const sqlSelectEntries2Weeks = `
+      select *
+      from "entries"
+      where "entryDate" between $1 and $2 AND "userId" = $3;
+    `
+
+    const params = [date1, date2, req.user?.userId]
+    const result = await db.query(sqlSelectEntries2Weeks, params)
+    const entries2Weeks = result.rows
+    if (!entries2Weeks) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
+    res.status(201).json(entries2Weeks)
+  }
+  catch (err) {
+    next(err)
+  }
+})
 
 // OTHER PATHS
 

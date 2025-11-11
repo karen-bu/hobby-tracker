@@ -598,18 +598,16 @@ justify-content: right;
 
 /* METRICS PAGE */
 
-
 .content-page.metrics {
-  display: flex;
-  justify-content: center;
   width: 100%;
+  justify-content: center;
+  display: flex;
+  overflow: scroll;
 
-@media screen and (width <= 1024px){
-  height: 130%;
+  @media screen and (width <= 1024px) {
+    height: 90%;
+  }
 }
-
-}
-
 .metrics.row-100 {
   display: flex;
   justify-content: center;
@@ -622,14 +620,12 @@ justify-content: right;
   width: 50%;
 }
 
-
 .content-page.metrics h1,
 .content-page.metrics h2,
 .content-page.metrics h3,
 .content-page.metrics h4,
 .content-page.metrics p {
   text-align: center;
-
 }
 
 .content-page.metrics h1 {
@@ -650,15 +646,18 @@ justify-content: right;
 
 .metrics.graph-wrapper {
   display: flex;
+  justify-content: space-around;
 
  @media screen and (width <= 1024px) {
-  display: inline;
+  display: grid;
+  overflow: scroll
  }
 }
 
 .metrics.graph {
   margin-left: 50px;
   margin-right: 50px;
+  margin-top: 50px;
 
 @media screen and (width <= 1024px) {
   margin-left: 0px;
