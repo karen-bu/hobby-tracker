@@ -39,7 +39,7 @@ export function GoalForm() {
             </div>
             <div className='goals row-100'>
               <div className='goals row-50 left'>
-                <p className='p-small'>Target Hours</p>
+                <p className='p-small'>Target Hours!</p>
               </div>
               <div className='goals row-50 right'>
                 <input className='targetHours' type='text' name='targetHours'></input>
