@@ -49,7 +49,6 @@ export function EntryForm({ date }: EntryFormProps) {
     <div className='calendar input-wrapper'
       onFocus={() => setIsBlurred(false)}>
       <div className='calendar form-wrapper row-100'>
-
         <form
           className='calendar form' onSubmit={submitEntryForm} >
           <div>
