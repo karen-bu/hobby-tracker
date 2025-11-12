@@ -39,20 +39,6 @@ export function Metrics() {
   const { date } = useUser()
   const [weeklyEntries, setWeeklyEntries] = useState<Entry[]>([])
 
-
-  useEffect(() => {
-    async function fetchWeeklyEntries() {
-      try {
-        const currentWeekEntries = await getEntryByWeek(date)
-        setWeeklyEntries(currentWeekEntries)
-      }
-      catch (err) {
-        console.error(err)
-      }
-    }
-    fetchWeeklyEntries()
-  }, [date])
-
   const chartColors =
     ['#D4EA87',
       '#ACE081',
@@ -135,46 +121,24 @@ export function Metrics() {
   const [entry4Weeks, setEntry4Weeks] = useState<Entry[]>([])
 
   useEffect(() => {
-    async function fetchEntries4Weeks() {
+    async function fetchEntries() {
       try {
-        const entryList4Weeks = await getEntry4Weeks(date)
-        setEntry4Weeks(entryList4Weeks)
-
-      }
-      catch (err) {
-        console.error(err)
+        const [entryList4Weeks, entryList3Weeks, entryList2Weeks, currentWeekEntries] = await Promise.all([
+          getEntry4Weeks(date),
+          getEntry3Weeks(date),
+          getEntry2Weeks(date),
+          getEntryByWeek(date),
+        ]);
+        setEntry4Weeks(entryList4Weeks);
+        setEntry3Weeks(entryList3Weeks);
+        setEntry2Weeks(entryList2Weeks);
+        setWeeklyEntries(currentWeekEntries);
+      } catch (err) {
+        console.error(err);
       }
     }
-    fetchEntries4Weeks()
-  }, [date])
-
-  useEffect(() => {
-    async function fetchEntries3Weeks() {
-      try {
-        const entryList3Weeks = await getEntry3Weeks(date)
-        setEntry3Weeks(entryList3Weeks)
-
-      }
-      catch (err) {
-        console.error(err)
-      }
-    }
-    fetchEntries3Weeks()
-  }, [date])
-
-  useEffect(() => {
-    async function fetchEntries2Weeks() {
-      try {
-        const entryList2Weeks = await getEntry2Weeks(date)
-        setEntry2Weeks(entryList2Weeks)
-
-      }
-      catch (err) {
-        console.error(err)
-      }
-    }
-    fetchEntries2Weeks()
-  }, [date])
+    fetchEntries();
+  }, [date]);
 
   const entry4WeeksReduced = Object.values(
     entry4Weeks.reduce((acc: any, { hoursSpent, hobbyName }) => {
@@ -237,38 +201,22 @@ export function Metrics() {
   // console.log('entry2WeeksReduced: ', entry2WeeksReduced)
   // console.log('entryThisWeekReduced: ', entryThisWeekReduced)
 
-  const allEntriesMonth = [...entry4WeeksReduced, ...entry3WeeksReduced, ...entry2WeeksReduced, ...entryThisWeekReduced]
+  const allEntriesMonth = [entry4WeeksReduced, entry3WeeksReduced, entry2WeeksReduced, entryThisWeekReduced]
   console.log('allEntriesMonth: ', allEntriesMonth)
 
   const allHobbyNames = [...new Set(allEntriesMonth.flat().map((obj) => obj.label))]
   console.log('allHobbyNames: ', allHobbyNames)
 
-  const entryWeeksCombined = Object.values(
-    allEntriesMonth.reduce((acc: any, { label, data }) => {
-      if (!acc[label]) {
-        acc[label] = { label, data: [data] }
-      } else if (!data) {
-        acc[label] = { data: [0] }
-      } else {
-        acc[label].data.push(data)
-      }
-      return acc
-    }, {}
-    )
-  )
+  const entryWeeksCombined = allHobbyNames.map(hobbyName => {
+    const data = allEntriesMonth.map(week => {
+      const found = week.find((obj: any) => obj.label === hobbyName);
+      return found ? found.data : 0;
+    });
+    return { label: hobbyName, data };
+  });
+
   console.log('allEntriesMonth: ', allEntriesMonth)
   console.log('entryWeeksCombined: ', entryWeeksCombined)
-
-  // const entryWeeksCombined2 = allHobbyNames.map((hobbyName) => {
-  //   const data = allEntriesMonth.map((week) => {
-  //     const found = week.find(obj => obj.label === hobbyName)
-  //     return found ? found.data : 0
-  //   }
-  //   )
-  //   return { hobbyName, data }
-  // })
-
-  // console.log('entryWeeksCombined2: ', entryWeeksCombined2)
 
   const lineSeries = [
     ...entryWeeksCombined
