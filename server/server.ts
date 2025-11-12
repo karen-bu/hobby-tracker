@@ -316,7 +316,7 @@ app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
     const params = [req.user?.userId]
     const result = await db.query(sqlGetHours, params)
     const totalHours = result.rows[0]
-    if (!totalHours) throw new ClientError(404, `Could not find total hours`)
+    if (!totalHours) throw new ClientError(404, `Could not find total hours spent`)
     res.status(201).json(totalHours)
     console.log(totalHours)
   }
@@ -324,6 +324,43 @@ app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
     next(err)
   }
 })
+
+// Path for getting actualHours for a specific hobby
+app.get('/api/auth/goals/actualHours', authMiddleware, async(req, res, next) => {
+  try {
+    const { user } = req.params
+    const { hobby } = req.body
+
+    const sqlGetActualHours = `
+      select sum("hoursSpent")
+      from "entries"
+      where "hobbyName" = $1
+      and "userId" = $2
+    `
+
+    const params = [hobby.hobbyName, req.user?.userId]
+    const result = await db.query(sqlGetActualHours)
+    const actualHours = result.rows[0]
+    if (!actualHours) throw new ClientError(404, `Could not find actual hours spent on ${hobby.hobbyName}`)
+    res.status(201).json(actualHours)
+    console.log(actualHours)
+
+
+  }
+  catch(err) {
+    next(err)
+  }
+})
+
+// Path for adding a new goal
+// app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
+//   try {
+
+//     const sqlGetTotalHours = ``
+//   }
+
+
+// })
 
 
 // OTHER PATHS
