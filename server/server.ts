@@ -339,6 +339,9 @@ app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
     if (!totalHours) throw new ClientError(404, `Could not find total hours spent on hobbies between ${date1} and ${date2}`)
     res.status(201).json(totalHours)
   }
+  catch(err) {
+    next(err)
+  }
 });
 
 // Path for getting actualHours for a specific hobby
@@ -457,7 +460,7 @@ app.get('/api/auth/metrics/entries3Weeks', authMiddleware, async(req,res,next) =
   }
 })
 
-// // ~*~*~*~*~~*~**~*~ Path for fetching entries from 2 weeks ago ~*~*~*~*~~*~**~*~
+// ~*~*~*~*~~*~**~*~ Path for fetching entries from 2 weeks ago ~*~*~*~*~~*~**~*~
 app.get('/api/auth/metrics/entries2Weeks', authMiddleware, async(req, res, next) => {
   try {
     const { user } = req.params
@@ -477,6 +480,32 @@ app.get('/api/auth/metrics/entries2Weeks', authMiddleware, async(req, res, next)
     const entries2Weeks = result.rows
     if (!entries2Weeks) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
     res.status(201).json(entries2Weeks)
+  }
+  catch (err) {
+    next(err)
+  }
+})
+
+// ~*~*~*~*~~*~**~*~ Path for fetching entries from 1 week ago ~*~*~*~*~~*~**~*~
+app.get('/api/auth/metrics/entries1Week', authMiddleware, async(req, res, next) => {
+  try {
+    const { user } = req.params
+    const { today } = req.body
+    const date = dayjs(today).utc()
+    const date1 = date.subtract(1, 'week').startOf('week').toISOString()
+    const date2 = date.subtract(1, 'week').endOf('week').toISOString()
+
+    const sqlSelectEntries1Week = `
+      select *
+      from "entries"
+      where "entryDate" between $1 and $2 AND "userId" = $3;
+    `
+
+    const params = [date1, date2, req.user?.userId]
+    const result = await db.query(sqlSelectEntries1Week, params)
+    const entries1Week = result.rows
+    if (!entries1Week) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
+    res.status(201).json(entries1Week)
   }
   catch (err) {
     next(err)

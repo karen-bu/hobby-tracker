@@ -186,6 +186,21 @@ export async function getEntry2Weeks(date: PickerValue): Promise<Entry[]> {
     return (await res.json()) as Entry[]
 }
 
+// Function for fetching journal entries from 2 weeks ago
+export async function getEntry1Week(date: PickerValue): Promise<Entry[]> {
+    const req = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+  }
+  const res = await fetch ('/api/auth/metrics/entries1Week', req);
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+    return (await res.json()) as Entry[]
+}
+
+
 // Function for getting total hours spent on hobbies in a week
 export async function getTotalHours(date: PickerValue) {
   const req = {

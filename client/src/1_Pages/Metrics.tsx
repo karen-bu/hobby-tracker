@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useUser } from "../2_Components/useUser";
-import { getEntryByWeek, getEntry2Weeks, getEntry3Weeks, getEntry4Weeks, getTotalHours, Entry } from "../lib";
-import dayjs from "dayjs";
+import { getEntryByWeek, getEntry1Week, getEntry2Weeks, getEntry3Weeks, getEntry4Weeks, getTotalHours, Entry } from "../lib";
 
 import { BarChart, PieChart, LineChart } from '@mui/x-charts'
 
@@ -130,51 +129,30 @@ export function Metrics() {
   };
 
   // ~*~*~*~*~~*~**~*~ LINECHART ~*~*~*~*~~*~**~*~
+  const [entry1Week, setEntry1Week] = useState<Entry[]>([])
   const [entry2Weeks, setEntry2Weeks] = useState<Entry[]>([])
   const [entry3Weeks, setEntry3Weeks] = useState<Entry[]>([])
   const [entry4Weeks, setEntry4Weeks] = useState<Entry[]>([])
 
   useEffect(() => {
-    async function fetchEntries4Weeks() {
+    async function fetchEntries() {
       try {
-        const entryList4Weeks = await getEntry4Weeks(date)
-        setEntry4Weeks(entryList4Weeks)
-
-      }
-      catch (err) {
-        console.error(err)
+        const [entryList4Weeks, entryList3Weeks, entryList2Weeks, entryList1Week] = await Promise.all([
+          getEntry4Weeks(date),
+          getEntry3Weeks(date),
+          getEntry2Weeks(date),
+          getEntry1Week(date),
+        ]);
+        setEntry4Weeks(entryList4Weeks);
+        setEntry3Weeks(entryList3Weeks);
+        setEntry2Weeks(entryList2Weeks);
+        setEntry1Week(entryList1Week);
+      } catch (err) {
+        console.error(err);
       }
     }
-    fetchEntries4Weeks()
-  }, [date])
-
-  useEffect(() => {
-    async function fetchEntries3Weeks() {
-      try {
-        const entryList3Weeks = await getEntry3Weeks(date)
-        setEntry3Weeks(entryList3Weeks)
-
-      }
-      catch (err) {
-        console.error(err)
-      }
-    }
-    fetchEntries3Weeks()
-  }, [date])
-
-  useEffect(() => {
-    async function fetchEntries2Weeks() {
-      try {
-        const entryList2Weeks = await getEntry2Weeks(date)
-        setEntry2Weeks(entryList2Weeks)
-
-      }
-      catch (err) {
-        console.error(err)
-      }
-    }
-    fetchEntries2Weeks()
-  }, [date])
+    fetchEntries();
+  }, [date]);
 
   const entry4WeeksReduced = Object.values(
     entry4Weeks.reduce((acc: any, { hoursSpent, hobbyName }) => {
@@ -212,16 +190,8 @@ export function Metrics() {
     )
   )
 
-  // for (let i = 0; i < hobbyArray.length; i++) {
-  //   if (!entry2WeeksReduced.includes({ label: hobbyArray[i].hobbyName }, 0)) {
-  //     const skippedHobby = { data: 0, label: hobbyArray[i].hobbyName }
-  //     const entry2WeeksReducedNew = [...entry2WeeksReduced, skippedHobby]
-  //     console.log('entry2WeeksReducedNew: ', entry2WeeksReducedNew)
-  //   }
-  // }
-
-  const entryThisWeekReduced = Object.values(
-    weeklyEntries.reduce((acc: any, { hoursSpent, hobbyName }) => {
+  const entry1WeekReduced = Object.values(
+    entry1Week.reduce((acc: any, { hoursSpent, hobbyName }) => {
       if (!acc[hobbyName]) {
         acc[hobbyName] = { data: hoursSpent, label: hobbyName }
       } else {
@@ -232,43 +202,22 @@ export function Metrics() {
     )
   )
 
-  // console.log('entry4WeeksReduced: ', entry4WeeksReduced)
-  // console.log('entry3WeeksReduced: ', entry3WeeksReduced)
-  // console.log('entry2WeeksReduced: ', entry2WeeksReduced)
-  // console.log('entryThisWeekReduced: ', entryThisWeekReduced)
-
-  const allEntriesMonth = [...entry4WeeksReduced, ...entry3WeeksReduced, ...entry2WeeksReduced, ...entryThisWeekReduced]
+  const allEntriesMonth = [entry4WeeksReduced, entry3WeeksReduced, entry2WeeksReduced, entry1WeekReduced]
   console.log('allEntriesMonth: ', allEntriesMonth)
 
   const allHobbyNames = [...new Set(allEntriesMonth.flat().map((obj) => obj.label))]
   console.log('allHobbyNames: ', allHobbyNames)
 
-  const entryWeeksCombined = Object.values(
-    allEntriesMonth.reduce((acc: any, { label, data }) => {
-      if (!acc[label]) {
-        acc[label] = { label, data: [data] }
-      } else if (!data) {
-        acc[label] = { data: [0] }
-      } else {
-        acc[label].data.push(data)
-      }
-      return acc
-    }, {}
-    )
-  )
+  const entryWeeksCombined = allHobbyNames.map(hobbyName => {
+    const data = allEntriesMonth.map(week => {
+      const found = week.find((obj: any) => obj.label === hobbyName);
+      return found ? found.data : 0;
+    });
+    return { label: hobbyName, data };
+  });
+
   console.log('allEntriesMonth: ', allEntriesMonth)
   console.log('entryWeeksCombined: ', entryWeeksCombined)
-
-  // const entryWeeksCombined2 = allHobbyNames.map((hobbyName) => {
-  //   const data = allEntriesMonth.map((week) => {
-  //     const found = week.find(obj => obj.label === hobbyName)
-  //     return found ? found.data : 0
-  //   }
-  //   )
-  //   return { hobbyName, data }
-  // })
-
-  // console.log('entryWeeksCombined2: ', entryWeeksCombined2)
 
   const lineSeries = [
     ...entryWeeksCombined
@@ -314,7 +263,7 @@ export function Metrics() {
             </h3>
             <LineChart
               xAxis={[{
-                data: ['-4w', '-3w', '-2w', 'today'], scaleType: 'point'
+                data: ['-4w', '-3w', '-2w', '-1w'], scaleType: 'point'
               }]}
               yAxis={[{ width: 5 }]}
               series={lineSeries}
