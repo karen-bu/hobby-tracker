@@ -139,7 +139,8 @@ app.get('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
       from "hobbies"
       where "userId" = $1;
     `;
-    const params = [req.user?.userId]
+
+    const params = [req.user?.userId];
     const result = await db.query<Hobby>(sqlGetHobbies, params);
     if (!result) {
       throw new ClientError(404, 'Cannot fetch list of hobbies');
@@ -178,7 +179,10 @@ app.post('/api/auth/hobbies', authMiddleware, async (req, res, next) => {
 
 // ~*~*~*~*~~*~**~*~ Path for deleting hobbies ~*~*~*~*~~*~**~*~
 
-app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) => {
+app.delete(
+  '/api/auth/hobbies/:hobbyId',
+  authMiddleware,
+  async (req, res, next) => {
     try {
       const { hobbyId } = req.params;
       const sqlDeleteHobby = `
@@ -202,9 +206,10 @@ app.delete('/api/auth/hobbies/:hobbyId', authMiddleware, async (req, res, next) 
 
 // ~*~*~*~*~~*~**~*~ Path for adding a new entry ~*~*~*~*~~*~**~*~
 
-app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
+app.post('/api/auth/calendar', authMiddleware, async (req, res, next) => {
   try {
-    const { hobbyId, hobbyName, hoursSpent, rating, notes, entryDate } = req.body
+    const { hobbyId, hobbyName, hoursSpent, rating, notes, entryDate } =
+      req.body;
 
     const sqlInsertEntry = `
       insert into "entries" ("userId", "hobbyId", "hobbyName", "hoursSpent", "rating", "notes", "entryDate")
@@ -212,19 +217,24 @@ app.post('/api/auth/calendar', authMiddleware, async(req, res, next) => {
       returning *;
     `;
 
-    const params = [req.user?.userId, hobbyId, hobbyName, hoursSpent, rating, notes, entryDate]
-    const result = await db.query(sqlInsertEntry, params)
-    const newEntry = result.rows[0]
+    const params = [
+      req.user?.userId,
+      hobbyId,
+      hobbyName,
+      hoursSpent,
+      rating,
+      notes,
+      entryDate,
+    ];
+    const result = await db.query(sqlInsertEntry, params);
+    const newEntry = result.rows[0];
 
-    if (!newEntry) throw new ClientError(404, `Unable to add entry.`)
-    res.status(201).json(newEntry)
-
+    if (!newEntry) throw new ClientError(404, `Unable to add entry.`);
+    res.status(201).json(newEntry);
+  } catch (err) {
+    next(err);
   }
-  catch (err) {
-    next(err)
-  }
-}
-);
+});
 
 // ~*~*~*~*~~*~**~*~ Path for fetching entries on a date ~*~*~*~*~~*~**~*~
 app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next) => {
@@ -234,21 +244,25 @@ app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next)
     const date1 = date.startOf('day').toISOString()
     const date2 = date.endOf('day').toISOString()
 
-    const sqlSelectEntryByDate = `
+      const sqlSelectEntryByDate = `
       select *
       from "entries"
       where "entryDate" between $1 and $2 AND "userId" = $3;
-      `
-    const params = [date1, date2, req.user?.userId]
-    const result = await db.query(sqlSelectEntryByDate, params)
-    const entriesByDate = result.rows
-    if (!entriesByDate) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
-    res.status(201).json(entriesByDate)
+      `;
+      const params = [date1, date2, req.user?.userId];
+      const result = await db.query(sqlSelectEntryByDate, params);
+      const entriesByDate = result.rows;
+      if (!entriesByDate)
+        throw new ClientError(
+          404,
+          `Unable to fetch entries created between ${date1} and ${date2}`
+        );
+      res.status(201).json(entriesByDate);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch(err) {
-    next(err)
-  }
-})
+);
 
 
 
@@ -261,25 +275,29 @@ app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next)
     where "entryId" = $1 AND "userId" = $2
     returning *;
     `;
-    const params = [entryId, req.user?.userId];
-    const result = await db.query(sqlDeleteEntry, params);
-    const deletedEntry = result.rows[0]
-    if (!deletedEntry) throw new ClientError(404, `Could not delete entry ${entryId}`)
-    res.status(204).json(deletedEntry);
+      const params = [entryId, req.user?.userId];
+      const result = await db.query(sqlDeleteEntry, params);
+      const deletedEntry = result.rows[0];
+      if (!deletedEntry)
+        throw new ClientError(404, `Could not delete entry ${entryId}`);
+      res.status(204).json(deletedEntry);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch (err) {
-    next(err)
-  }
-})
+);
 
 // ~*~*~*~*~~*~**~*~ Path for updating entries ~*~*~*~*~~*~**~*~
 
-app.put('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) => {
-  try {
-    const entryId = Number(req.params.entryId)
-    const { hoursSpent, rating, notes } = req.body
+app.put(
+  '/api/auth/calendar/:entryId',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const entryId = Number(req.params.entryId);
+      const { hoursSpent, rating, notes } = req.body;
 
-    const sqlUpdateEntry = `
+      const sqlUpdateEntry = `
     update "entries"
       set "hoursSpent" = $1,
           "rating" = $2,
@@ -287,17 +305,18 @@ app.put('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) =>
           where "entryId" = $4
           AND "userId" = $5
           returning *
-    `
-    const params = [hoursSpent, rating, notes, entryId, req.user?.userId]
-    const result = await db.query(sqlUpdateEntry, params)
-    const updatedEntry = result.rows[0]
-    if (!updatedEntry) throw new ClientError(404, `Could not update entry ${entryId}`)
-    res.status(201).json(updatedEntry)
+    `;
+      const params = [hoursSpent, rating, notes, entryId, req.user?.userId];
+      const result = await db.query(sqlUpdateEntry, params);
+      const updatedEntry = result.rows[0];
+      if (!updatedEntry)
+        throw new ClientError(404, `Could not update entry ${entryId}`);
+      res.status(201).json(updatedEntry);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch(err) {
-    next(err)
-  }
-})
+);
 
 
 // ~*~*~*~*~~*~**~*~ Path for getting total hours spent on hobbies in a week ~*~*~*~*~~*~**~*~
@@ -320,10 +339,46 @@ app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
     if (!totalHours) throw new ClientError(404, `Could not find total hours spent on hobbies between ${date1} and ${date2}`)
     res.status(201).json(totalHours)
   }
-  catch(err) {
-    next(err)
+});
+
+// Path for getting actualHours for a specific hobby
+app.get(
+  '/api/auth/goals/actualHours',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { user } = req.params;
+      const { hobby } = req.body;
+
+      const sqlGetActualHours = `
+      select sum("hoursSpent")
+      from "entries"
+      where "hobbyName" = $1
+      and "userId" = $2
+    `;
+
+      const params = [hobby.hobbyName, req.user?.userId];
+      const result = await db.query(sqlGetActualHours);
+      const actualHours = result.rows[0];
+      if (!actualHours)
+        throw new ClientError(
+          404,
+          `Could not find actual hours spent on ${hobby.hobbyName}`
+        );
+      res.status(201).json(actualHours);
+      console.log(actualHours);
+    } catch (err) {
+      next(err);
+    }
   }
-})
+);
+
+// Path for adding a new goa
+// app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
+//   try {
+
+//     const sqlGetTotalHours = ``
+//   }
 
 // ~*~*~*~*~~*~**~*~ Path for fetching entries from this week ~*~*~*~*~~*~**~*~
 app.get('/api/auth/metrics/entriesThisWeek', authMiddleware, async(req, res, next) => {

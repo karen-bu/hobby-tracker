@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormEvent, useState } from "react"
 import { useUser } from "./useUser";
+
 import { Autocomplete, TextField } from "@mui/material";
 
 import { FiPlusCircle } from "react-icons/fi";
@@ -16,7 +17,6 @@ export function GoalForm() {
     if (isExpanded) setIsExpanded(false)
     if (!isExpanded) setIsExpanded(true)
   }
-
 
   return (
     <div className='goals row-100'>
@@ -39,7 +39,7 @@ export function GoalForm() {
             </div>
             <div className='goals row-100'>
               <div className='goals row-50 left'>
-                <p className='p-small'>Target Hours!</p>
+                <p className='p-small'>Target Hours</p>
               </div>
               <div className='goals row-50 right'>
                 <input className='targetHours' type='text' name='targetHours'></input>
