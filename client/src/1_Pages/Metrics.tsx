@@ -10,7 +10,7 @@ import { BarChart, PieChart, LineChart } from '@mui/x-charts'
 export function Metrics() {
 
   // ~*~*~*~*~~*~**~*~ USER MANAGEMENT ~*~*~*~*~~*~**~*~
-  const { user } = useUser()
+  const { user, hobbyArray } = useUser()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -76,24 +76,51 @@ export function Metrics() {
     height: 300,
   }
 
-  const hobbyNames = weeklyEntries.map((entry) => entry.hobbyName)
+  const barDataX = Object.values(
+    weeklyEntries.reduce((acc: any, { hobbyName }) => {
+      if (!acc[hobbyName]) {
+        acc[hobbyName] = [hobbyName]
+      }
+      return acc
+    }, {}
+    )
+  )
+
+  const barDataY = Object.values(
+    weeklyEntries.reduce((acc: any, { hoursSpent }) => {
+      if (!acc[hoursSpent]) {
+        acc[hoursSpent] = [hoursSpent]
+      }
+      return acc
+    }, {}
+    )
+  )
+
   const barXAxis = [
     {
-      data: hobbyNames,
+      data: barDataX,
     }
   ]
 
-  const hobbyHours = weeklyEntries.map((entry) => entry.hoursSpent)
   const barSeries = [
     {
-      data: hobbyHours,
+      data: barDataY,
       colorGetter: (data) => chartColors[data.dataIndex],
     }
   ]
 
   // ~*~*~*~*~~*~**~*~ PIECHART ~*~*~*~*~~*~**~*~
-  const pieData = weeklyEntries.map((entry, index) =>
-    ({ label: entry.hobbyName, value: entry.hoursSpent, color: chartColors[index] }))
+  const pieData = Object.values(
+    weeklyEntries.reduce((acc: any, { hoursSpent, hobbyName }) => {
+      if (!acc[hobbyName]) {
+        acc[hobbyName] = { label: hobbyName, value: hoursSpent }
+      } else {
+        acc[hobbyName].data += hoursSpent
+      }
+      return acc
+    }, {}
+    )
+  )
 
   const pieSettings = {
     // margin: { right: 5 },
@@ -185,6 +212,14 @@ export function Metrics() {
     )
   )
 
+  // for (let i = 0; i < hobbyArray.length; i++) {
+  //   if (!entry2WeeksReduced.includes({ label: hobbyArray[i].hobbyName }, 0)) {
+  //     const skippedHobby = { data: 0, label: hobbyArray[i].hobbyName }
+  //     const entry2WeeksReducedNew = [...entry2WeeksReduced, skippedHobby]
+  //     console.log('entry2WeeksReducedNew: ', entry2WeeksReducedNew)
+  //   }
+  // }
+
   const entryThisWeekReduced = Object.values(
     weeklyEntries.reduce((acc: any, { hoursSpent, hobbyName }) => {
       if (!acc[hobbyName]) {
@@ -197,18 +232,23 @@ export function Metrics() {
     )
   )
 
-
-  console.log('entry4WeeksReduced: ', entry4WeeksReduced)
-  console.log('entry3WeeksReduced: ', entry3WeeksReduced)
-  console.log('entry2WeeksReduced: ', entry2WeeksReduced)
-  console.log('entryThisWeekReduced: ', entryThisWeekReduced)
+  // console.log('entry4WeeksReduced: ', entry4WeeksReduced)
+  // console.log('entry3WeeksReduced: ', entry3WeeksReduced)
+  // console.log('entry2WeeksReduced: ', entry2WeeksReduced)
+  // console.log('entryThisWeekReduced: ', entryThisWeekReduced)
 
   const allEntriesMonth = [...entry4WeeksReduced, ...entry3WeeksReduced, ...entry2WeeksReduced, ...entryThisWeekReduced]
+  console.log('allEntriesMonth: ', allEntriesMonth)
+
+  const allHobbyNames = [...new Set(allEntriesMonth.flat().map((obj) => obj.label))]
+  console.log('allHobbyNames: ', allHobbyNames)
 
   const entryWeeksCombined = Object.values(
     allEntriesMonth.reduce((acc: any, { label, data }) => {
       if (!acc[label]) {
         acc[label] = { label, data: [data] }
+      } else if (!data) {
+        acc[label] = { data: [0] }
       } else {
         acc[label].data.push(data)
       }
@@ -218,6 +258,17 @@ export function Metrics() {
   )
   console.log('allEntriesMonth: ', allEntriesMonth)
   console.log('entryWeeksCombined: ', entryWeeksCombined)
+
+  // const entryWeeksCombined2 = allHobbyNames.map((hobbyName) => {
+  //   const data = allEntriesMonth.map((week) => {
+  //     const found = week.find(obj => obj.label === hobbyName)
+  //     return found ? found.data : 0
+  //   }
+  //   )
+  //   return { hobbyName, data }
+  // })
+
+  // console.log('entryWeeksCombined2: ', entryWeeksCombined2)
 
   const lineSeries = [
     ...entryWeeksCombined
@@ -252,6 +303,7 @@ export function Metrics() {
               series={[
                 { innerRadius: 70, outerRadius: 150, data: pieData, arcLabel: 'value' }
               ]}
+              colors={chartColors}
               sx={{ fontFamily: 'Barlow' }}
               {...pieSettings}
             />
@@ -267,6 +319,7 @@ export function Metrics() {
               yAxis={[{ width: 5 }]}
               series={lineSeries}
               height={300}
+              colors={chartColors}
             />
           </div>
         </div>
