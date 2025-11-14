@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 export function Goals() {
   const { user, goalArray, setGoalArray } = useUser()
   const navigate = useNavigate()
-  const [entryObject, setEntryObject] = useState({})
 
   useEffect(() => {
     if (!user) {
@@ -31,11 +30,23 @@ export function Goals() {
     }
   }
 
-  const goals = goalArray.map((goal: Goal) =>
-    <div key={goal.goalId}>
-      <GoalChip handleDelete={() => handleDeleteGoal(goal)}
-        targetHours={goal.targetHours} hobbyName={goal.hobbyName} />
-    </div>
+  const goals = goalArray.map((goal: Goal) => {
+    if (!goal.actualHours || goal.actualHours < goal.targetHours) {
+      return (<div key={goal.goalId} >
+        <GoalChip handleDelete={() => handleDeleteGoal(goal)}
+          targetHours={goal.targetHours} hobbyName={goal.hobbyName} color={'#d9d9d9'} />
+      </div>)
+    } else if (goal.actualHours < goal.targetHours) {
+      return (<div key={goal.goalId} >
+        <GoalChip handleDelete={() => handleDeleteGoal(goal)}
+          targetHours={goal.targetHours} hobbyName={goal.hobbyName} color={'#d9d9d9'} />
+      </div>)
+    } else
+      return (<div key={goal.goalId} >
+        <GoalChip handleDelete={() => handleDeleteGoal(goal)}
+          targetHours={goal.targetHours} hobbyName={goal.hobbyName} color={'#17456c'} />
+      </div>)
+  }
   )
 
   return (

@@ -107,8 +107,8 @@ export function UserProvider({ children }: Props) {
   useEffect(() => {
     async function getGoals() {
       try {
-        const goalArray = await fetchGoals();
-        setGoalArray(goalArray)
+        const newGoalArray = await fetchGoals();
+        setGoalArray(newGoalArray)
       }
       catch (err) {
         alert(`Error fetching goals: ${err}`)
@@ -117,7 +117,7 @@ export function UserProvider({ children }: Props) {
     if (user) {
       getGoals();
     }
-  }, [user, navigate]
+  }, [user]
   )
 
   const contextValues = { user, token, hobbyArray, setHobbyArray, handleSignIn, handleSignOut, date, entryArray, setEntryArray, setDate, goalArray, setGoalArray };
