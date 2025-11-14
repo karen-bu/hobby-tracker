@@ -1,13 +1,14 @@
 import { FormEvent } from 'react';
-import { useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
 
 type FormProps = {
   handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  content: string;
+  setContent: (string: string) => void;
 };
 
-export function HobbyForm({ handleSubmit }: FormProps) {
-  const [content, setContent] = useState('');
+export function HobbyForm({ handleSubmit, content, setContent }: FormProps) {
+
 
   return (
     <form onSubmit={handleSubmit}>

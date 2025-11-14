@@ -1,4 +1,4 @@
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { useUser } from '../2_Components/useUser';
 
 import { HobbyForm } from '../2_Components/HobbyForm';
@@ -9,8 +9,8 @@ import { deleteHobby } from '../lib';
 import { Hobby } from '../lib';
 
 export function Hobbies() {
-
   const { hobbyArray, setHobbyArray } = useUser()
+  const [content, setContent] = useState('');
 
   async function submitHobbyForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,6 +19,7 @@ export function Hobbies() {
       const newHobby = Object.fromEntries(formData) as unknown as Hobby;
       const addedHobby = await addHobby(newHobby);
       setHobbyArray([...hobbyArray, addedHobby]);
+      setContent('')
     } catch (err) {
       console.error(err);
       alert(`Error adding hobby ${event.currentTarget.value}`);
@@ -54,7 +55,7 @@ export function Hobbies() {
     <div className="content-page hobbies">
       <div className="hobbies list-wrapper">
         <div className="hobbies input-wrapper">
-          <HobbyForm handleSubmit={submitHobbyForm} />
+          <HobbyForm handleSubmit={submitHobbyForm} content={content} setContent={setContent} />
         </div>
         <div className="hobbies text-wrapper">
           <div className="hobbies text-wrapper">
