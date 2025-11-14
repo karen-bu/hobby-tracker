@@ -7,10 +7,13 @@ import { Autocomplete, TextField } from "@mui/material";
 import { FiPlusCircle } from "react-icons/fi";
 import { FiXCircle } from "react-icons/fi";
 
+import { addGoal, Goal } from '../lib';
+
 export function GoalForm() {
   const [isExpanded, setIsExpanded] = useState(false)
-  const { hobbyArray } = useUser()
+  const { hobbyArray, goalArray, setGoalArray } = useUser()
   const hobbies = hobbyArray.map((hobby) => hobby.hobbyName)
+  const goalHobbies = goalArray.map((goal) => goal.hobbyName)
   const [value, setValue] = React.useState<string | null>(hobbies[0]);
 
   function expandGoalForm() {
@@ -18,9 +21,24 @@ export function GoalForm() {
     if (!isExpanded) setIsExpanded(true)
   }
 
+  async function handleGoalFormSubmit(event: FormEvent<HTMLFormElement>) {
+    event?.preventDefault()
+    try {
+      const foundHobby = hobbyArray.find((obj) => obj.hobbyName === value)
+      const formData = new FormData(event.currentTarget)
+      const newGoal = Object.fromEntries(formData.entries()) as unknown as Goal
+      if (value) newGoal.hobbyName = value
+      if (foundHobby) newGoal.hobbyId = foundHobby?.hobbyId
+      const addedGoal = await addGoal(newGoal)
+      setGoalArray([...goalArray, addedGoal])
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return (
-    <div className='goals row-100'>
-      <form className='goals-form'>
+    <div className='goals form-wrapper'>
+      <form className='goals form' onSubmit={handleGoalFormSubmit}>
         <div className='goals row-100' onClick={expandGoalForm}>
           <p className='p-small'>Add New Weekly Goal</p>
         </div>
@@ -35,6 +53,7 @@ export function GoalForm() {
                 renderInput={(params) => <TextField {...params} label='Select Hobby' />}
                 value={value || null}
                 onChange={(event: any, newValue: string | null) => setValue(newValue)}
+                getOptionDisabled={(option) => goalHobbies.includes(option)}
               />
             </div>
             <div className='goals row-100'>

@@ -22,6 +22,14 @@ export type Entry = {
   entryId: number
 }
 
+export type Goal = {
+  hobbyName: string;
+  hobbyId: number;
+  targetHours: number;
+  actualHours?: number;
+  goalId?: number;
+}
+
 const authKey = 'hobbyHorse.auth';
 
 type Auth = {
@@ -31,7 +39,6 @@ type Auth = {
 
 
 // Functions for user management
-
 export function removeAuth(): void {
   localStorage.removeItem(authKey);
 }
@@ -215,7 +222,6 @@ export async function getTotalHours(date: PickerValue) {
     return await res.json()
 }
 
-
 // Function for deleting a journal entry
 export async function deleteEntry(entryId: number) {
   const req = {
@@ -242,4 +248,47 @@ export async function editEntry(entry: Entry) {
   const res = await fetch(`/api/auth/calendar/${entry.entryId}`, req)
   if (!res.ok) throw new Error(`fetch error ${res.status}`)
   return (await res.json()) as Entry
+}
+
+// Function for getting goals
+export async function fetchGoals() {
+  const req = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    }
+  }
+  const res = await fetch(`/api/auth/goals`, req)
+  if (!res.ok) throw new Error(`fetch error ${res.status}`)
+  return (await res.json()) as Goal[]
+
+}
+
+// Function for adding a new goal
+export async function addGoal(goal: Goal) {
+  const req = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+    body: JSON.stringify(goal)
+  }
+  const res = await fetch('/api/auth/goals', req)
+  if (!res.ok) throw new Error(`fetchError ${res.status}`)
+  return (await res.json()) as Goal
+}
+
+// Function for deleting a goal
+export async function deleteGoal(goalId: number) {
+  const req = {
+    method: 'DELETE',
+     headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${readToken()}`,
+    },
+  }
+  const res = await fetch(`/api/auth/goals/${goalId}`, req)
+  if (!res.ok) throw new Error(`fetchError ${res.status}`)
 }

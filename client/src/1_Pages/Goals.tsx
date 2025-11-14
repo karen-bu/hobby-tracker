@@ -1,16 +1,51 @@
 import { GoalForm } from "../2_Components/GoalForm";
 import { GoalChip } from "../2_Components/GoalChip";
+import { useUser } from "../2_Components/useUser";
+import { Goal, deleteGoal } from "../lib";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export function Goals() {
+  const { user, goalArray, setGoalArray } = useUser()
+  const navigate = useNavigate()
+  const [entryObject, setEntryObject] = useState({})
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/sign-in');
+    }
+  }, [user]);
+
+  async function handleDeleteGoal(goal: Goal) {
+    try {
+      const deletedGoalIndex = goalArray.findIndex(
+        (obj) => obj.goalId === goal.goalId
+      )
+      const newGoalArray = [...goalArray];
+      newGoalArray.splice(deletedGoalIndex, 1)
+      setGoalArray(newGoalArray)
+      if (goal.goalId) deleteGoal(goal.goalId)
+    } catch (err) {
+      console.error(err)
+      alert(`Error deleting goal for ${goal.hobbyName}`)
+    }
+  }
+
+  const goals = goalArray.map((goal: Goal) =>
+    <div key={goal.goalId}>
+      <GoalChip handleDelete={() => handleDeleteGoal(goal)}
+        targetHours={goal.targetHours} hobbyName={goal.hobbyName} />
+    </div>
+  )
+
   return (
     <div className="content-page goals">
       <div className='goals entry-wrapper'>
         <div className='goals row-100'>
           <h1>Weekly Goals</h1>
         </div>
-        <div>
-          <GoalChip hobbyName={'Hockey'} hours={10} />
-          <GoalChip hobbyName={'Gardening'} hours={30} />
+        <div className='goalChip-wrapper'>
+          {goals}
         </div>
         <div className='goals row-100'>
           <GoalForm />
