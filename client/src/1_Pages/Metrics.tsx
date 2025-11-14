@@ -85,29 +85,20 @@ export function Metrics() {
     )
   )
 
-  const barDataY = Object.values(
-    weeklyEntries.reduce((acc: any, { hoursSpent }) => {
-      if (!acc[hoursSpent]) {
-        acc[hoursSpent] = hoursSpent
+  const weeklyEntriesReduced = Object.values(
+    weeklyEntries.reduce((acc: any, { hoursSpent, hobbyName }) => {
+      if (!acc[hobbyName]) {
+        acc[hobbyName] = { data: hoursSpent, label: hobbyName }
+      } else {
+        acc[hobbyName].data += hoursSpent
       }
       return acc
     }, {}
     )
   )
 
-  // const entry4WeeksReduced = Object.values(
-  //   entry4Weeks.reduce((acc: any, { hoursSpent, hobbyName }) => {
-  //     if (!acc[hobbyName]) {
-  //       acc[hobbyName] = { data: hoursSpent, label: hobbyName }
-  //     } else {
-  //       acc[hobbyName].data += hoursSpent
-  //     }
-  //     return acc
-  //   }, {}
-  //   )
-  // )
+  const barDataY = weeklyEntriesReduced.map((obj: any) => obj.data)
 
-  console.log(barDataY)
 
   const barXAxis = [
     {
@@ -122,13 +113,14 @@ export function Metrics() {
     }
   ]
 
+
   // ~*~*~*~*~~*~**~*~ PIECHART ~*~*~*~*~~*~**~*~
   const pieData = Object.values(
     weeklyEntries.reduce((acc: any, { hoursSpent, hobbyName }) => {
       if (!acc[hobbyName]) {
         acc[hobbyName] = { label: hobbyName, value: hoursSpent }
       } else {
-        acc[hobbyName].data += hoursSpent
+        acc[hobbyName].value += hoursSpent
       }
       return acc
     }, {}
