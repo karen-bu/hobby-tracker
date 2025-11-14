@@ -11,8 +11,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
-dayjs.tz.guess()
-
+dayjs.tz.guess();
 
 import { FaAngleLeft } from 'react-icons/fa';
 import { FaAngleRight } from 'react-icons/fa';
@@ -26,7 +25,7 @@ export function Calendar() {
   const { user } = useUser();
   const navigate = useNavigate();
 
-  const { entryArray, setEntryArray, date, setDate } = useUser()
+  const { entryArray, setEntryArray, date, setDate } = useUser();
 
   useEffect(() => {
     if (!user) {
@@ -43,20 +42,25 @@ export function Calendar() {
       );
       deleteEntry(entry.entryId);
       entryArray.splice(deletedHobbyIndex, 1);
-      setEntryArray([...entryArray])
+      setEntryArray([...entryArray]);
     } catch (err) {
       console.error(err);
       alert(`Error deleting hobby ${entry.entryId}`);
     }
   }
 
-  const entries = entryArray.map((entry: Entry) =>
-    <div key={entry.entryId} >
+  const entries = entryArray.map((entry: Entry) => (
+    <div key={entry.entryId}>
       <EntryCard
-        hobbyName={entry.hobbyName} hoursSpent={entry.hoursSpent} rating={entry.rating}
-        notes={entry.notes} entryId={entry.entryId} handleDelete={() => handleDeleteEntry(entry)} />
+        hobbyName={entry.hobbyName}
+        hoursSpent={entry.hoursSpent}
+        rating={entry.rating}
+        notes={entry.notes}
+        entryId={entry.entryId}
+        handleDelete={() => handleDeleteEntry(entry)}
+      />
     </div>
-  )
+  ));
 
   useEffect(() => {
     if (!date) return;
@@ -68,9 +72,7 @@ export function Calendar() {
       } catch (error) {
         console.error(error);
       }
-    }
-    )
-      ();
+    })();
     return () => {
       mounted = false;
     };
@@ -101,18 +103,15 @@ export function Calendar() {
           </div>
         </div>
       </div>
-      <div className='calendar entries-wrapper'>
+      <div className="calendar entries-wrapper">
         <div>
           <EntryForm date={date} />
         </div>
 
         {entries}
 
-        <div>
-        </div>
+        <div></div>
       </div>
-
-
     </div>
   );
 }
