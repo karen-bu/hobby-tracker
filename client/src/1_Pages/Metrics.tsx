@@ -78,7 +78,7 @@ export function Metrics() {
   const barDataX = Object.values(
     weeklyEntries.reduce((acc: any, { hobbyName }) => {
       if (!acc[hobbyName]) {
-        acc[hobbyName] = [hobbyName]
+        acc[hobbyName] = hobbyName
       }
       return acc
     }, {}
@@ -88,12 +88,26 @@ export function Metrics() {
   const barDataY = Object.values(
     weeklyEntries.reduce((acc: any, { hoursSpent }) => {
       if (!acc[hoursSpent]) {
-        acc[hoursSpent] = [hoursSpent]
+        acc[hoursSpent] = hoursSpent
       }
       return acc
     }, {}
     )
   )
+
+  // const entry4WeeksReduced = Object.values(
+  //   entry4Weeks.reduce((acc: any, { hoursSpent, hobbyName }) => {
+  //     if (!acc[hobbyName]) {
+  //       acc[hobbyName] = { data: hoursSpent, label: hobbyName }
+  //     } else {
+  //       acc[hobbyName].data += hoursSpent
+  //     }
+  //     return acc
+  //   }, {}
+  //   )
+  // )
+
+  console.log(barDataY)
 
   const barXAxis = [
     {
@@ -203,10 +217,7 @@ export function Metrics() {
   )
 
   const allEntriesMonth = [entry4WeeksReduced, entry3WeeksReduced, entry2WeeksReduced, entry1WeekReduced]
-  console.log('allEntriesMonth: ', allEntriesMonth)
-
   const allHobbyNames = [...new Set(allEntriesMonth.flat().map((obj) => obj.label))]
-  console.log('allHobbyNames: ', allHobbyNames)
 
   const entryWeeksCombined = allHobbyNames.map(hobbyName => {
     const data = allEntriesMonth.map(week => {
@@ -215,9 +226,6 @@ export function Metrics() {
     });
     return { label: hobbyName, data };
   });
-
-  console.log('allEntriesMonth: ', allEntriesMonth)
-  console.log('entryWeeksCombined: ', entryWeeksCombined)
 
   const lineSeries = [
     ...entryWeeksCombined

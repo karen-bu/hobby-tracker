@@ -5,7 +5,6 @@ import { type Entry, addEntry } from '../lib';
 
 import dayjs from "dayjs";
 
-
 import { Autocomplete } from "@mui/material";
 import { TextField } from '@mui/material';
 import { Rating } from '@mui/material';
@@ -30,9 +29,7 @@ export function EntryForm({ date }: EntryFormProps) {
   async function submitEntryForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      const foundHobby = hobbyArray.find(
-        (obj) => obj.hobbyName === value
-      );
+      const foundHobby = hobbyArray.find((obj) => obj.hobbyName === value);
       const formData = new FormData(event.currentTarget);
       const newEntry = Object.fromEntries(formData.entries()) as unknown as Entry
       if (date) newEntry.entryDate = date?.toDate()

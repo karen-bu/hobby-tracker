@@ -9,6 +9,7 @@ import { main } from './seed.js';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { json } from 'stream/consumers';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -376,12 +377,6 @@ app.get(
   }
 );
 
-// Path for adding a new goa
-// app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
-//   try {
-
-//     const sqlGetTotalHours = ``
-//   }
 
 // ~*~*~*~*~~*~**~*~ Path for fetching entries from this week ~*~*~*~*~~*~**~*~
 app.get('/api/auth/metrics/entriesThisWeek', authMiddleware, async(req, res, next) => {
@@ -512,6 +507,90 @@ app.get('/api/auth/metrics/entries1Week', authMiddleware, async(req, res, next) 
   }
 })
 
+// ~*~*~*~*~~*~**~*~ Path for getting goals ~*~*~*~*~~*~**~*~
+
+app.get('/api/auth/goals', authMiddleware, async(req, res, next) => {
+  try {
+    const sqlGetGoals = `
+      select *
+      from "goals"
+      join "hobbies" using ("hobbyId")
+      where "goals"."userId" = $1;
+    `
+    const params = [req.user?.userId]
+    const result = await db.query(sqlGetGoals, params)
+    const goalsList = result.rows
+    if (!goalsList) throw new ClientError(404, `Unable to fetch goals`)
+    res.status(201).json(goalsList)
+  }
+  catch (err) {
+    next(err)
+  }
+})
+
+// ~*~*~*~*~~*~**~*~ Path for adding a new goal ~*~*~*~*~~*~**~*~
+
+app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
+  try {
+    const { today, hobbyName, hobbyId, targetHours } = req.body
+
+    const date = dayjs(today).utc()
+    const date1 = date.startOf('week').toISOString()
+    const date2 = date.endOf('week').toISOString()
+
+    const sqlGetActualHours = `
+      select sum("hoursSpent")
+      from "entries"
+      where "hobbyId" = $1
+      and "entryDate" between $2 and $3
+      and "userId" = $4;
+      `
+    const paramsActualHours = [hobbyId, date1, date2, req.user?.userId]
+    const result = await db.query(sqlGetActualHours, paramsActualHours)
+    const actualHours = result.rows[0]
+    if (!actualHours) throw new ClientError(404, `Unable to get actual hours for ${hobbyName}`)
+
+    const actualHoursNumber = +actualHours.sum
+
+    const sqlAddGoal = `
+      insert into "goals" ("hobbyId", "userId", "startDate", "actualHours", "targetHours")
+      values ($1, $2, $3, $4, $5)
+      returning *;
+    `
+    const paramsAddGoal = [hobbyId, req.user?.userId, date, actualHoursNumber, targetHours]
+    const newGoal = await db.query(sqlAddGoal, paramsAddGoal)
+    if (!newGoal) throw new ClientError(404, `Unable to add new goal`)
+    res.status(201).json(newGoal)
+
+  }
+  catch(err) {
+    next(err)
+  }
+})
+
+// ~*~*~*~*~~*~**~*~ Path for deleting a goal ~*~*~*~*~~*~**~*~
+
+app.delete('/api/auth/goals/:goalId', authMiddleware, async (req, res, next ) => {
+  try {
+    const { goalId } = req.params;
+    const sqlDeleteGoal = `
+    delete from "goals"
+    where "goalId" = $1
+    and "userId" = $2
+    returning *;
+    `;
+
+    const params = [goalId, req.user?.userId]
+    const result = await db.query(sqlDeleteGoal, params);
+    const deletedGoal = result.rows[0]
+    if (!deletedGoal) throw new ClientError(404, `Could not delete goal ${goalId}`)
+      res.status(204).json(deletedGoal)
+  } catch (err) {
+    next (err)
+  }
+})
+
+
 // OTHER PATHS
 
 /*
@@ -525,5 +604,4 @@ app.use(errorMiddleware);
 
 app.listen(process.env.PORT, async () => {
   console.log('Listening on port', process.env.PORT);
-  main();
 });

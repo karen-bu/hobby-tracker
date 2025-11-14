@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, saveAuth, removeAuth, readToken, readUser } from '../lib';
-import { Hobby, fetchHobbies, Entry, getEntryByDate } from '../lib';
+import { User, saveAuth, removeAuth, readToken, readUser, fetchGoals } from '../lib';
+import { Goal, Hobby, fetchHobbies, Entry, getEntryByDate } from '../lib';
 import { PickerValue } from '@mui/x-date-pickers/internals';
 import dayjs from 'dayjs';
 
@@ -16,6 +16,8 @@ export type UserContextValues = {
   entryArray: Entry[];
   setEntryArray: (entryArray: Entry[]) => void;
   setDate: (date: PickerValue) => void;
+  goalArray: Goal[],
+  setGoalArray: (goalArray: Goal[]) => void;
 };
 
 export const UserContext = createContext<UserContextValues>({
@@ -32,7 +34,9 @@ export const UserContext = createContext<UserContextValues>({
   date: dayjs(),
   entryArray: [],
   setEntryArray: () => useState<Entry[]>([]),
-  setDate: () => useState<PickerValue>(dayjs())
+  setDate: () => useState<PickerValue>(dayjs()),
+  goalArray: [],
+  setGoalArray: () => useState<Goal[]>([])
 
 });
 
@@ -46,6 +50,7 @@ export function UserProvider({ children }: Props) {
   const [hobbyArray, setHobbyArray] = useState<Hobby[]>([])
   const [date, setDate] = useState<PickerValue>(dayjs());
   const [entryArray, setEntryArray] = useState<Entry[]>([])
+  const [goalArray, setGoalArray] = useState<Goal[]>([])
 
 
   const navigate = useNavigate()
@@ -82,7 +87,6 @@ export function UserProvider({ children }: Props) {
   }, [user, navigate]);
 
   useEffect(() => {
-    // console.log('Selected date:', date?.toISOString());
     if (!date) return;
     let mounted = true;
     (async () => {
@@ -95,14 +99,28 @@ export function UserProvider({ children }: Props) {
     }
     )
       ();
-
     return () => {
       mounted = false;
     };
-
   }, [date]);
 
-  const contextValues = { user, token, hobbyArray, setHobbyArray, handleSignIn, handleSignOut, date, entryArray, setEntryArray, setDate };
+  useEffect(() => {
+    async function getGoals() {
+      try {
+        const goalArray = await fetchGoals();
+        setGoalArray(goalArray)
+      }
+      catch (err) {
+        alert(`Error fetching goals: ${err}`)
+      }
+    }
+    if (user) {
+      getGoals();
+    }
+  }, [user, navigate]
+  )
+
+  const contextValues = { user, token, hobbyArray, setHobbyArray, handleSignIn, handleSignOut, date, entryArray, setEntryArray, setDate, goalArray, setGoalArray };
 
   return (
     <UserContext.Provider value={contextValues}>
