@@ -117,7 +117,7 @@ export function UserProvider({ children }: Props) {
     if (user) {
       getGoals();
     }
-  }, [user]
+  }, [user, navigate]
   )
 
   const contextValues = { user, token, hobbyArray, setHobbyArray, handleSignIn, handleSignOut, date, entryArray, setEntryArray, setDate, goalArray, setGoalArray };

@@ -3,7 +3,7 @@ import { GoalChip } from "../2_Components/GoalChip";
 import { useUser } from "../2_Components/useUser";
 import { Goal, deleteGoal } from "../lib";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export function Goals() {
   const { user, goalArray, setGoalArray } = useUser()
