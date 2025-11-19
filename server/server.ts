@@ -546,8 +546,8 @@ app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
       and "userId" = $4;
       `
     const paramsActualHours = [hobbyId, date1, date2, req.user?.userId]
-    const result = await db.query(sqlGetActualHours, paramsActualHours)
-    const actualHours = result.rows[0]
+    const actualHoursResult = await db.query(sqlGetActualHours, paramsActualHours)
+    const actualHours = actualHoursResult.rows[0]
     if (!actualHours) throw new ClientError(404, `Unable to get actual hours for ${hobbyName}`)
 
     const actualHoursNumber = +actualHours.sum
@@ -558,8 +558,10 @@ app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
       returning *;
     `
     const paramsAddGoal = [hobbyId, req.user?.userId, date, actualHoursNumber, targetHours]
-    const newGoal = await db.query(sqlAddGoal, paramsAddGoal)
+    const newGoalResult = await db.query(sqlAddGoal, paramsAddGoal)
+    const newGoal = newGoalResult.rows[0]
     if (!newGoal) throw new ClientError(404, `Unable to add new goal`)
+    newGoal.hobbyName = hobbyName
     res.status(201).json(newGoal)
 
   }
