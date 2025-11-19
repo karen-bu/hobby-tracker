@@ -444,11 +444,12 @@ MAIN BODY
   align-items: center;
 }
 
+
 .calendar.calendar-wrapper,
+.calendar.input-wrapper,
 .calendar.text-wrapper,
 .calendar.date-wrapper,
-.calendar.entries-wrapper
-.calendar.input-wrapper {
+.calendar.entries-wrapper {
   width: 100%;
   justify-content: center;
 
@@ -690,14 +691,6 @@ justify-content: right;
   justify-content: right;
 }
 
-.goals.form-wrapper {
-  width: 100%;
-}
-
-.content-page.metrics h3 {
-  font-size: 1.5rem;
-}
-
 .metrics.graph-wrapper {
   display: flex;
   justify-content: space-around;
@@ -713,6 +706,12 @@ justify-content: right;
   margin-right: 50px;
   margin-top: 50px;
 
+}
+
+.goalChip-wrapper {
+  @media screen and (width <= 1024px) {
+    padding: 30px;
+ }
 }
 
 .goals.button-wrapper {
@@ -741,6 +740,10 @@ justify-content: right;
   flex-wrap: wrap;
   width: 40%;
   padding: 20px;
+
+  @media screen and (width <= 1024px) {
+    width: 100%
+  }
 }
 
 .goals.form {

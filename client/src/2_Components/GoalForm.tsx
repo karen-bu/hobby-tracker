@@ -31,7 +31,7 @@ export function GoalForm() {
       if (value) newGoal.hobbyName = value;
       if (foundHobby) newGoal.hobbyId = foundHobby?.hobbyId;
       const addedGoal = await addGoal(newGoal);
-      setGoalArray((prev) => [...prev, addedGoal]);
+      setGoalArray([...goalArray, addedGoal]);
       setValue('');
       setHoursValue('');
     } catch (err) {
