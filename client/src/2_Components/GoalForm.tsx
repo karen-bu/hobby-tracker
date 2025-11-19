@@ -57,7 +57,7 @@ export function GoalForm() {
                   <TextField {...params} label="Select Hobby" />
                 )}
                 value={value || null}
-                onChange={(event: any, newValue: string | null) =>
+                onChange={(_event: any, newValue: string | null) =>
                   setValue(newValue)
                 }
                 getOptionDisabled={(option) => goalHobbies.includes(option)}
