@@ -66,7 +66,7 @@ export function EntryForm({ date }: EntryFormProps) {
             )}
             onFocus={() => setIsBlurred(false)}
             value={value || null}
-            onChange={(event: any, newValue: string | null) =>
+            onChange={(_event: any, newValue: string | null) =>
               setValue(newValue)
             }
             getOptionDisabled={(option) => entryHobbies.includes(option)}
@@ -99,7 +99,7 @@ export function EntryForm({ date }: EntryFormProps) {
                     precision={1}
                     name="rating"
                     value={ratingValue}
-                    onChange={(event, newRatingValue) => {
+                    onChange={(_event, newRatingValue) => {
                       setRatingValue(newRatingValue);
                     }}
                   />
