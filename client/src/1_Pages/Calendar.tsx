@@ -31,7 +31,7 @@ export function Calendar() {
     if (!user) {
       navigate('/sign-in');
     }
-  }, [user]);
+  }, [user, navigate]);
 
   const formattedDate = dayjs(date).format('MMMM DD, YYYY');
 
@@ -76,7 +76,7 @@ export function Calendar() {
     return () => {
       mounted = false;
     };
-  }, [date]);
+  }, [date, setEntryArray]);
 
   return (
     <div className="content-page calendar">

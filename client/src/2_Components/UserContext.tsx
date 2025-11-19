@@ -1,6 +1,13 @@
 import { ReactNode, createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, saveAuth, removeAuth, readToken, readUser, fetchGoals } from '../lib';
+import {
+  User,
+  saveAuth,
+  removeAuth,
+  readToken,
+  readUser,
+  fetchGoals,
+} from '../lib';
 import { Goal, Hobby, fetchHobbies, Entry, getEntryByDate } from '../lib';
 import { PickerValue } from '@mui/x-date-pickers/internals';
 import dayjs from 'dayjs';
@@ -16,7 +23,7 @@ export type UserContextValues = {
   entryArray: Entry[];
   setEntryArray: (entryArray: Entry[]) => void;
   setDate: (date: PickerValue) => void;
-  goalArray: Goal[],
+  goalArray: Goal[];
   setGoalArray: (goalArray: Goal[]) => void;
 };
 
@@ -30,14 +37,13 @@ export const UserContext = createContext<UserContextValues>({
     throw new Error('No UserProvider');
   },
   hobbyArray: [],
-  setHobbyArray: () => useState<Hobby[]>([]),
+  setHobbyArray: () => [],
   date: dayjs(),
   entryArray: [],
-  setEntryArray: () => useState<Entry[]>([]),
-  setDate: () => useState<PickerValue>(dayjs()),
+  setEntryArray: () => [],
+  setDate: () => dayjs(),
   goalArray: [],
-  setGoalArray: () => useState<Goal[]>([])
-
+  setGoalArray: () => [],
 });
 
 type Props = {
@@ -47,13 +53,12 @@ type Props = {
 export function UserProvider({ children }: Props) {
   const [user, setUser] = useState<User>();
   const [token, setToken] = useState<string>();
-  const [hobbyArray, setHobbyArray] = useState<Hobby[]>([])
+  const [hobbyArray, setHobbyArray] = useState<Hobby[]>([]);
   const [date, setDate] = useState<PickerValue>(dayjs());
-  const [entryArray, setEntryArray] = useState<Entry[]>([])
-  const [goalArray, setGoalArray] = useState<Goal[]>([])
+  const [entryArray, setEntryArray] = useState<Entry[]>([]);
+  const [goalArray, setGoalArray] = useState<Goal[]>([]);
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     setUser(readUser());
@@ -96,9 +101,7 @@ export function UserProvider({ children }: Props) {
       } catch (error) {
         console.error(error);
       }
-    }
-    )
-      ();
+    })();
     return () => {
       mounted = false;
     };
@@ -108,19 +111,30 @@ export function UserProvider({ children }: Props) {
     async function getGoals() {
       try {
         const newGoalArray = await fetchGoals();
-        setGoalArray(newGoalArray)
-      }
-      catch (err) {
-        alert(`Error fetching goals: ${err}`)
+        setGoalArray(newGoalArray);
+      } catch (err) {
+        alert(`Error fetching goals: ${err}`);
       }
     }
     if (user) {
       getGoals();
     }
-  }, [user, navigate]
-  )
+  }, [user, navigate]);
 
-  const contextValues = { user, token, hobbyArray, setHobbyArray, handleSignIn, handleSignOut, date, entryArray, setEntryArray, setDate, goalArray, setGoalArray };
+  const contextValues = {
+    user,
+    token,
+    hobbyArray,
+    setHobbyArray,
+    handleSignIn,
+    handleSignOut,
+    date,
+    entryArray,
+    setEntryArray,
+    setDate,
+    goalArray,
+    setGoalArray,
+  };
 
   return (
     <UserContext.Provider value={contextValues}>

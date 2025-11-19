@@ -238,12 +238,15 @@ app.post('/api/auth/calendar', authMiddleware, async (req, res, next) => {
 });
 
 // ~*~*~*~*~~*~**~*~ Path for fetching entries on a date ~*~*~*~*~~*~**~*~
-app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next) => {
-  try {
-    const { entryDate } = req.body
-    const date = dayjs(entryDate).utc()
-    const date1 = date.startOf('day').toISOString()
-    const date2 = date.endOf('day').toISOString()
+app.post(
+  '/api/auth/calendar/entryByDate',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { entryDate } = req.body;
+      const date = dayjs(entryDate).utc();
+      const date1 = date.startOf('day').toISOString();
+      const date2 = date.endOf('day').toISOString();
 
       const sqlSelectEntryByDate = `
       select *
@@ -265,13 +268,14 @@ app.post('/api/auth/calendar/entryByDate', authMiddleware, async(req, res, next)
   }
 );
 
-
-
 // ~*~*~*~*~~*~**~*~ Path for deleting entries ~*~*~*~*~~*~**~*~
-app.delete('/api/auth/calendar/:entryId', authMiddleware, async (req, res, next) => {
-  try {
-    const { entryId } = req.params
-    const sqlDeleteEntry = `
+app.delete(
+  '/api/auth/calendar/:entryId',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { entryId } = req.params;
+      const sqlDeleteEntry = `
     delete from "entries"
     where "entryId" = $1 AND "userId" = $2
     returning *;
@@ -319,29 +323,31 @@ app.put(
   }
 );
 
-
 // ~*~*~*~*~~*~**~*~ Path for getting total hours spent on hobbies in a week ~*~*~*~*~~*~**~*~
 app.get('/api/auth/metrics', authMiddleware, async (req, res, next) => {
   try {
-    const { user } = req.params
-    const { today } = req.body
-    const date = dayjs(today).utc()
-    const date1 = date.startOf('week').toISOString()
-    const date2 = date.endOf('week').toISOString()
+    const { user } = req.params;
+    const { today } = req.body;
+    const date = dayjs(today).utc();
+    const date1 = date.startOf('week').toISOString();
+    const date2 = date.endOf('week').toISOString();
 
     const sqlGetHours = `
       select sum("hoursSpent")
       from "entries"
       where "entryDate" between $1 and $2 AND "userId" = $3;
-    `
-    const params = [date1, date2, req.user?.userId]
-    const result = await db.query(sqlGetHours, params)
-    const totalHours = result.rows[0]
-    if (!totalHours) throw new ClientError(404, `Could not find total hours spent on hobbies between ${date1} and ${date2}`)
-    res.status(201).json(totalHours)
-  }
-  catch(err) {
-    next(err)
+    `;
+    const params = [date1, date2, req.user?.userId];
+    const result = await db.query(sqlGetHours, params);
+    const totalHours = result.rows[0];
+    if (!totalHours)
+      throw new ClientError(
+        404,
+        `Could not find total hours spent on hobbies between ${date1} and ${date2}`
+      );
+    res.status(201).json(totalHours);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -377,166 +383,189 @@ app.get(
   }
 );
 
-
 // ~*~*~*~*~~*~**~*~ Path for fetching entries from this week ~*~*~*~*~~*~**~*~
-app.get('/api/auth/metrics/entriesThisWeek', authMiddleware, async(req, res, next) => {
-  try {
-    const { user } = req.params
-    const { today } = req.body
-    const date = dayjs(today).utc()
-    const date1 = date.startOf('week').toISOString()
-    const date2 = date.endOf('week').toISOString()
+app.get(
+  '/api/auth/metrics/entriesThisWeek',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const date = dayjs().utc();
+      const date1 = date.startOf('week').toISOString();
+      const date2 = date.endOf('week').toISOString();
 
-    const sqlSelectEntriesByWeek = `
+      const sqlSelectEntriesByWeek = `
       select *
       from "entries"
       where "entryDate" between $1 and $2 AND "userId" = $3;
-      `
-    const params = [date1, date2, req.user?.userId]
-    const result = await db.query(sqlSelectEntriesByWeek, params)
-    const entriesByWeek = result.rows
-    if (!entriesByWeek) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
-    res.status(201).json(entriesByWeek)
+      `;
+      const params = [date1, date2, req.user?.userId];
+      const result = await db.query(sqlSelectEntriesByWeek, params);
+      const entriesByWeek = result.rows;
+      if (!entriesByWeek)
+        throw new ClientError(
+          404,
+          `Unable to fetch entries created between ${date1} and ${date2}`
+        );
+      res.status(201).json(entriesByWeek);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch (err) {
-    next(err)
-  }
-})
+);
 
 // ~*~*~*~*~~*~**~*~ Path for fetching entries from 4 weeks ago ~*~*~*~*~~*~**~*~
-app.get('/api/auth/metrics/entries4Weeks', authMiddleware, async(req, res, next) => {
-  try {
-    const { user } = req.params
-    const { today } = req.body
-    const date = dayjs(today).utc()
-    const date1 = date.subtract(4, 'week').startOf('week').toISOString()
-    const date2 = date.subtract(4, 'week').endOf('week').toISOString()
+app.get(
+  '/api/auth/metrics/entries4Weeks',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const date = dayjs().utc();
+      const date1 = date.subtract(4, 'week').startOf('week').toISOString();
+      const date2 = date.subtract(4, 'week').endOf('week').toISOString();
 
-    const sqlSelectEntries4Weeks = `
+      const sqlSelectEntries4Weeks = `
       select *
       from "entries"
       where "entryDate" between $1 and $2 AND "userId" = $3;
-    `
+    `;
 
-    const params = [date1, date2, req.user?.userId]
-    const result = await db.query(sqlSelectEntries4Weeks, params)
-    const entries4Weeks = result.rows
-    if (!entries4Weeks) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
-    res.status(201).json(entries4Weeks)
+      const params = [date1, date2, req.user?.userId];
+      const result = await db.query(sqlSelectEntries4Weeks, params);
+      const entries4Weeks = result.rows;
+      if (!entries4Weeks)
+        throw new ClientError(
+          404,
+          `Unable to fetch entries created between ${date1} and ${date2}`
+        );
+      res.status(201).json(entries4Weeks);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch (err) {
-    next (err)
-  }
-})
+);
 
 // // ~*~*~*~*~~*~**~*~ Path for fetching entries from 3 weeks ago ~*~*~*~*~~*~**~*~
-app.get('/api/auth/metrics/entries3Weeks', authMiddleware, async(req,res,next) => {
-  try {
-    const { user } = req.params
-    const { today } = req.body
-    const date = dayjs(today).utc()
-    const date1 = date.subtract(3, 'week').startOf('week').toISOString()
-    const date2 = date.subtract(3, 'week').endOf('week').toISOString()
+app.get(
+  '/api/auth/metrics/entries3Weeks',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const date = dayjs().utc();
+      const date1 = date.subtract(3, 'week').startOf('week').toISOString();
+      const date2 = date.subtract(3, 'week').endOf('week').toISOString();
 
-   const sqlSelectEntries3Weeks = `
+      const sqlSelectEntries3Weeks = `
       select *
       from "entries"
       where "entryDate" between $1 and $2 AND "userId" = $3;
-    `
+    `;
 
-    const params = [date1, date2, req.user?.userId]
-    const result = await db.query(sqlSelectEntries3Weeks, params)
-    const entries3Weeks = result.rows
-    if (!entries3Weeks) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
-    res.status(201).json(entries3Weeks)
+      const params = [date1, date2, req.user?.userId];
+      const result = await db.query(sqlSelectEntries3Weeks, params);
+      const entries3Weeks = result.rows;
+      if (!entries3Weeks)
+        throw new ClientError(
+          404,
+          `Unable to fetch entries created between ${date1} and ${date2}`
+        );
+      res.status(201).json(entries3Weeks);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch(err) {
-    next(err)
-  }
-})
+);
 
 // ~*~*~*~*~~*~**~*~ Path for fetching entries from 2 weeks ago ~*~*~*~*~~*~**~*~
-app.get('/api/auth/metrics/entries2Weeks', authMiddleware, async(req, res, next) => {
-  try {
-    const { user } = req.params
-    const { today } = req.body
-    const date = dayjs(today).utc()
-    const date1 = date.subtract(2, 'week').startOf('week').toISOString()
-    const date2 = date.subtract(2, 'week').endOf('week').toISOString()
+app.get(
+  '/api/auth/metrics/entries2Weeks',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const date = dayjs().utc();
+      const date1 = date.subtract(2, 'week').startOf('week').toISOString();
+      const date2 = date.subtract(2, 'week').endOf('week').toISOString();
 
-    const sqlSelectEntries2Weeks = `
+      const sqlSelectEntries2Weeks = `
       select *
       from "entries"
       where "entryDate" between $1 and $2 AND "userId" = $3;
-    `
+    `;
 
-    const params = [date1, date2, req.user?.userId]
-    const result = await db.query(sqlSelectEntries2Weeks, params)
-    const entries2Weeks = result.rows
-    if (!entries2Weeks) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
-    res.status(201).json(entries2Weeks)
+      const params = [date1, date2, req.user?.userId];
+      const result = await db.query(sqlSelectEntries2Weeks, params);
+      const entries2Weeks = result.rows;
+      if (!entries2Weeks)
+        throw new ClientError(
+          404,
+          `Unable to fetch entries created between ${date1} and ${date2}`
+        );
+      res.status(201).json(entries2Weeks);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch (err) {
-    next(err)
-  }
-})
+);
 
 // ~*~*~*~*~~*~**~*~ Path for fetching entries from 1 week ago ~*~*~*~*~~*~**~*~
-app.get('/api/auth/metrics/entries1Week', authMiddleware, async(req, res, next) => {
-  try {
-    const { user } = req.params
-    const { today } = req.body
-    const date = dayjs(today).utc()
-    const date1 = date.subtract(1, 'week').startOf('week').toISOString()
-    const date2 = date.subtract(1, 'week').endOf('week').toISOString()
+app.get(
+  '/api/auth/metrics/entries1Week',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const date = dayjs().utc();
+      const date1 = date.subtract(1, 'week').startOf('week').toISOString();
+      const date2 = date.subtract(1, 'week').endOf('week').toISOString();
 
-    const sqlSelectEntries1Week = `
+      const sqlSelectEntries1Week = `
       select *
       from "entries"
       where "entryDate" between $1 and $2 AND "userId" = $3;
-    `
+    `;
 
-    const params = [date1, date2, req.user?.userId]
-    const result = await db.query(sqlSelectEntries1Week, params)
-    const entries1Week = result.rows
-    if (!entries1Week) throw new ClientError(404, `Unable to fetch entries created between ${date1} and ${date2}`)
-    res.status(201).json(entries1Week)
+      const params = [date1, date2, req.user?.userId];
+      const result = await db.query(sqlSelectEntries1Week, params);
+      const entries1Week = result.rows;
+      if (!entries1Week)
+        throw new ClientError(
+          404,
+          `Unable to fetch entries created between ${date1} and ${date2}`
+        );
+      res.status(201).json(entries1Week);
+    } catch (err) {
+      next(err);
+    }
   }
-  catch (err) {
-    next(err)
-  }
-})
+);
 
 // ~*~*~*~*~~*~**~*~ Path for getting goals ~*~*~*~*~~*~**~*~
 
-app.get('/api/auth/goals', authMiddleware, async(req, res, next) => {
+app.get('/api/auth/goals', authMiddleware, async (req, res, next) => {
   try {
     const sqlGetGoals = `
       select *
       from "goals"
       join "hobbies" using ("hobbyId")
       where "goals"."userId" = $1;
-    `
-    const params = [req.user?.userId]
-    const result = await db.query(sqlGetGoals, params)
-    const goalsList = result.rows
-    if (!goalsList) throw new ClientError(404, `Unable to fetch goals`)
-    res.status(201).json(goalsList)
+    `;
+    const params = [req.user?.userId];
+    const result = await db.query(sqlGetGoals, params);
+    const goalsList = result.rows;
+    if (!goalsList) throw new ClientError(404, `Unable to fetch goals`);
+    res.status(201).json(goalsList);
+  } catch (err) {
+    next(err);
   }
-  catch (err) {
-    next(err)
-  }
-})
+});
 
 // ~*~*~*~*~~*~**~*~ Path for adding a new goal ~*~*~*~*~~*~**~*~
 
-app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
+app.post('/api/auth/goals', authMiddleware, async (req, res, next) => {
   try {
-    const { today, hobbyName, hobbyId, targetHours } = req.body
+    const { today, hobbyName, hobbyId, targetHours } = req.body;
 
-    const date = dayjs(today).utc()
-    const date1 = date.startOf('week').toISOString()
-    const date2 = date.endOf('week').toISOString()
+    const date = dayjs(today).utc();
+    const date1 = date.startOf('week').toISOString();
+    const date2 = date.endOf('week').toISOString();
 
     const sqlGetActualHours = `
       select sum("hoursSpent")
@@ -544,54 +573,66 @@ app.post('/api/auth/goals', authMiddleware, async(req, res, next) => {
       where "hobbyId" = $1
       and "entryDate" between $2 and $3
       and "userId" = $4;
-      `
-    const paramsActualHours = [hobbyId, date1, date2, req.user?.userId]
-    const actualHoursResult = await db.query(sqlGetActualHours, paramsActualHours)
-    const actualHours = actualHoursResult.rows[0]
-    if (!actualHours) throw new ClientError(404, `Unable to get actual hours for ${hobbyName}`)
+      `;
+    const paramsActualHours = [hobbyId, date1, date2, req.user?.userId];
+    const actualHoursResult = await db.query(
+      sqlGetActualHours,
+      paramsActualHours
+    );
+    const actualHours = actualHoursResult.rows[0];
+    if (!actualHours)
+      throw new ClientError(404, `Unable to get actual hours for ${hobbyName}`);
 
-    const actualHoursNumber = +actualHours.sum
+    const actualHoursNumber = +actualHours.sum;
 
     const sqlAddGoal = `
       insert into "goals" ("hobbyId", "userId", "startDate", "actualHours", "targetHours")
       values ($1, $2, $3, $4, $5)
       returning *;
-    `
-    const paramsAddGoal = [hobbyId, req.user?.userId, date, actualHoursNumber, targetHours]
-    const newGoalResult = await db.query(sqlAddGoal, paramsAddGoal)
-    const newGoal = newGoalResult.rows[0]
-    if (!newGoal) throw new ClientError(404, `Unable to add new goal`)
-    newGoal.hobbyName = hobbyName
-    res.status(201).json(newGoal)
-
+    `;
+    const paramsAddGoal = [
+      hobbyId,
+      req.user?.userId,
+      date,
+      actualHoursNumber,
+      targetHours,
+    ];
+    const newGoalResult = await db.query(sqlAddGoal, paramsAddGoal);
+    const newGoal = newGoalResult.rows[0];
+    if (!newGoal) throw new ClientError(404, `Unable to add new goal`);
+    newGoal.hobbyName = hobbyName;
+    res.status(201).json(newGoal);
+  } catch (err) {
+    next(err);
   }
-  catch(err) {
-    next(err)
-  }
-})
+});
 
 // ~*~*~*~*~~*~**~*~ Path for deleting a goal ~*~*~*~*~~*~**~*~
 
-app.delete('/api/auth/goals/:goalId', authMiddleware, async (req, res, next ) => {
-  try {
-    const { goalId } = req.params;
-    const sqlDeleteGoal = `
+app.delete(
+  '/api/auth/goals/:goalId',
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { goalId } = req.params;
+      const sqlDeleteGoal = `
     delete from "goals"
     where "goalId" = $1
     and "userId" = $2
     returning *;
     `;
 
-    const params = [goalId, req.user?.userId]
-    const result = await db.query(sqlDeleteGoal, params);
-    const deletedGoal = result.rows[0]
-    if (!deletedGoal) throw new ClientError(404, `Could not delete goal ${goalId}`)
-      res.status(204).json(deletedGoal)
-  } catch (err) {
-    next (err)
+      const params = [goalId, req.user?.userId];
+      const result = await db.query(sqlDeleteGoal, params);
+      const deletedGoal = result.rows[0];
+      if (!deletedGoal)
+        throw new ClientError(404, `Could not delete goal ${goalId}`);
+      res.status(204).json(deletedGoal);
+    } catch (err) {
+      next(err);
+    }
   }
-})
-
+);
 
 // OTHER PATHS
 
